@@ -1,0 +1,63 @@
+@mixin sizeFix() {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@mixin transition(
+  $time: .34s,
+  $prop: all,
+  $type: ease
+) {
+  -webkit-transition: $prop $time $type;
+  -moz-transition: $prop $time $type;
+  -o-transition: $prop $time $type;
+  transition: $prop $time $type;
+}
+
+@mixin absolute(
+  $position: absolute,
+  $top: 0,
+  $right: 0,
+  $bottom: 0,
+  $left: 0
+) {
+  position: $position;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  margin: auto;
+}
+
+@mixin placeholder() {
+  &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    @content;
+  }
+  &::-moz-placeholder { /* Firefox 19+ */
+    @content;
+  }
+  &:-ms-input-placeholder { /* IE 10+ */
+    @content;
+  }
+  &:-moz-placeholder { /* Firefox 18- */
+    @content;
+  }
+}
+
+@mixin noSelect() {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin multilineEllipsis($lineQty) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lineQty;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
