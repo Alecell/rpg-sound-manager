@@ -30,7 +30,7 @@ const RootPage = () => {
           <button
             type="button"
             key={store.campaigns.data[key].id}
-            onClick={({ target, currentTarget }) => {
+            onClick={() => {
               console.log('clicou na: ', store.campaigns.data[key]);
             }}
           >
