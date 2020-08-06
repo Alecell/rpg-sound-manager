@@ -34,7 +34,7 @@
     ],
     "seperator": "/",
     "msgBranchDisallowed": "Commit to \"%s\" is not allowed, create other branch and make a PR for this feature",
-    "msgPrefixNotAllowed": "Branch prefix \"%s\" is not allowed.",
+    "msgPrefixNotAllowed": "Branch prefix \"%s\" is not allowed. See the allowed prefixes on branch-name-lint.config.json",
     "msgPrefixSuggestion": "\"%s\" should be replaced to \"%s\".",
     "msgSeperatorRequired": "Branch \"%s\" must contain a seperator \"%s\"\nExample:  feat/foo, ci/bar, fix/baz."
   }
