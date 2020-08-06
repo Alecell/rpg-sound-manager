@@ -3,7 +3,7 @@ import { IRequestState } from '../types';
 interface ICampaign {
   id: string;
   name: string;
-};
+}
 
 export enum CampaignsRequestTypes {
   LOAD_REQUEST = '@campaigns/LOAD_REQUEST',

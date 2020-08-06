@@ -5,4 +5,4 @@ export enum EFirestoreCollections {
   SCENES = 'scenes',
   SOUNDS = 'sounds',
   MIXES = 'mixes'
-};
+}

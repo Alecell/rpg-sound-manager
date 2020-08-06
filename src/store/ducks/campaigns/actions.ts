@@ -1,4 +1,5 @@
 import { action } from 'typesafe-actions';
+import Role from 'lance';
 import { CampaignsRequestTypes, CampaignsState } from './types';
 
 export class CampaignActions {
