@@ -14,28 +14,31 @@
       "test"
     ],
     "suggestions": {
-      "features": "feature",
-      "fe": "feature",
-      "fi": "fix",
+      "cicd": "ci",
+      "shore": "chore",
+      "doc": "docs",
+      "features": "feat",
+      "feature": "feat",
       "fixes": "fix",
-      "hotfix": "fix"
+      "hotfix": "fix",
+      "performance": "perf",
+      "performances": "perf",
+      "refactors": "refactor",
+      "ref": "refactor",
+      "rev": "revert",
+      "styles": "style",
+      "tests": "test"
     },
     "banned": [
       "wip"
     ],
-    "skip": [
-      "skip-ci"
-    ],
     "disallowed": [
-      "master",
-      "develop",
-      "staging"
+      "master"
     ],
     "seperator": "/",
-    "msgBranchBanned": "Branches with the name \"%s\" are not allowed.",
-    "msgBranchDisallowed": "Pushing to \"%s\" is not allowed, use git-flow.",
+    "msgBranchDisallowed": "Pushing to \"%s\" is not allowed, create other branch and make a PR for this feature",
     "msgPrefixNotAllowed": "Branch prefix \"%s\" is not allowed.",
-    "msgPrefixSuggestion": "Instead of \"%s\" try \"%s\".",
-    "msgSeperatorRequired": "Branch \"%s\" must contain a seperator \"%s\"."
+    "msgPrefixSuggestion": "\"%s\" should be replaced to \"%s\".",
+    "msgSeperatorRequired": "Branch \"%s\" must contain a seperator \"%s\"\nExample:  feat/foo, ci/bar, fix/baz."
   }
 }
