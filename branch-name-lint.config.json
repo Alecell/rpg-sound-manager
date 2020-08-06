@@ -29,14 +29,11 @@
       "styles": "style",
       "tests": "test"
     },
-    "banned": [
-      "wip"
-    ],
     "disallowed": [
       "master"
     ],
     "seperator": "/",
-    "msgBranchDisallowed": "Pushing to \"%s\" is not allowed, create other branch and make a PR for this feature",
+    "msgBranchDisallowed": "Commit to \"%s\" is not allowed, create other branch and make a PR for this feature",
     "msgPrefixNotAllowed": "Branch prefix \"%s\" is not allowed.",
     "msgPrefixSuggestion": "\"%s\" should be replaced to \"%s\".",
     "msgSeperatorRequired": "Branch \"%s\" must contain a seperator \"%s\"\nExample:  feat/foo, ci/bar, fix/baz."
