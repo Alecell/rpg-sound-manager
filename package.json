@@ -36,12 +36,12 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo 'teste'",
+      "pre-commit": "lint-staged",
       "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
   "lint-staged": {
-    "*.ts": ["eslint --fix", "git add"]
+    "*.(ts|tsx)": ["eslint --fix"]
   },
   "eslintConfig": {
     "extends": "react-app"
