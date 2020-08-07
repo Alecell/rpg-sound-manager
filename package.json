@@ -49,14 +49,10 @@
       "npx stylelint '**/*.scss' --fix"
     ]
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
+
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "since 2010"
     ],
     "development": [
       "last 1 chrome version",
