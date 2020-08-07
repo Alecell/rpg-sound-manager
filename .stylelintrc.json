@@ -1,0 +1,32 @@
+{
+  "extends": "stylelint-config-sass-guidelines",
+  "ignoreFiles": ["**/package.json"],
+  "rules": {
+    "max-nesting-depth": 5,
+
+    "selector-max-compound-selectors": 5,
+    "selector-class-pattern": [
+      "(^[a-z]|[A-Z])[a-z]+$", 
+      {
+        "message": "Classes should be wrote as PascalCase or camelCase"
+      }
+    ],
+
+    "order/properties-alphabetical-order": null,
+    "order/order": [
+      "custom-properties",
+      "dollar-variables",
+      "declarations",
+      {
+        "type": "at-rule",
+        "name": "include",
+        "hasBlock": false
+      },
+      {
+        "type": "at-rule",
+        "name": "include",
+        "hasBlock": true
+      }
+    ]
+  }
+}
