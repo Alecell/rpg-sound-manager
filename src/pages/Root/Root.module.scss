@@ -5,10 +5,10 @@
   display: flex;
 
   .containerMain {
-    height: calc(100vh - #{$headerHeight});
+    height: calc(100vh - #{$header-height});
     margin-top: 55px;
     padding: 34px;
     width: 100%;
-    @include sizeFix;
+    @include size-fix;
   }
 }
