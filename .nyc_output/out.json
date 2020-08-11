@@ -1,0 +1,133 @@
+{
+  "/mnt/2819d700-af5e-4b5b-98b0-31c5230becbf/projects/rpg-music-manager/rpg-sound-manager-v2/src/components/Header/Header.tsx": {
+    "path": "/mnt/2819d700-af5e-4b5b-98b0-31c5230becbf/projects/rpg-music-manager/rpg-sound-manager-v2/src/components/Header/Header.tsx",
+    "statementMap": {
+      "0": {
+        "start": {
+          "line": 9,
+          "column": 21
+        },
+        "end": {
+          "line": 9,
+          "column": 23
+        }
+      },
+      "1": {
+        "start": {
+          "line": 11,
+          "column": 18
+        },
+        "end": {
+          "line": 19,
+          "column": 3
+        }
+      },
+      "2": {
+        "start": {
+          "line": 11,
+          "column": 40
+        },
+        "end": {
+          "line": 19,
+          "column": 2
+        }
+      },
+      "3": {
+        "start": {
+          "line": 21,
+          "column": 15
+        },
+        "end": {
+          "line": 36,
+          "column": 1
+        }
+      },
+      "4": {
+        "start": {
+          "line": 22,
+          "column": 18
+        },
+        "end": {
+          "line": 22,
+          "column": 29
+        }
+      },
+      "5": {
+        "start": {
+          "line": 24,
+          "column": 2
+        },
+        "end": {
+          "line": 35,
+          "column": 4
+        }
+      }
+    },
+    "fnMap": {
+      "0": {
+        "name": "(anonymous_0)",
+        "decl": {
+          "start": {
+            "line": 11,
+            "column": 29
+          },
+          "end": {
+            "line": 11,
+            "column": 30
+          }
+        },
+        "loc": {
+          "start": {
+            "line": 11,
+            "column": 40
+          },
+          "end": {
+            "line": 19,
+            "column": 2
+          }
+        },
+        "line": 11
+      },
+      "1": {
+        "name": "(anonymous_1)",
+        "decl": {
+          "start": {
+            "line": 21,
+            "column": 15
+          },
+          "end": {
+            "line": 21,
+            "column": 16
+          }
+        },
+        "loc": {
+          "start": {
+            "line": 21,
+            "column": 21
+          },
+          "end": {
+            "line": 36,
+            "column": 1
+          }
+        },
+        "line": 21
+      }
+    },
+    "branchMap": {},
+    "s": {
+      "0": 2,
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2,
+      "5": 2
+    },
+    "f": {
+      "0": 2,
+      "1": 2
+    },
+    "b": {},
+    "_coverageSchema": "43e27e138ebf9cfc5966b082cf9a028302ed4184",
+    "hash": "fb621391e964474730f1ed82cfb7a168751b07ac"
+  }
+}
