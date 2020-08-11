@@ -11,8 +11,8 @@
   },
   "include": [
     "../node_modules/cypress",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/tests/**/*.spec.ts",
+    "**/tests/**/*.spec.tsx"
   ],
   "exclude": []
 }
