@@ -38,8 +38,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && npx branch-name-lint ./branch-name-lint.config.json",
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
-      "pre-push": "npx branch-name-lint ./branch-name-lint.config.json"
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
   "lint-staged": {
