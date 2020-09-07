@@ -9,19 +9,19 @@ const cookieStorage = new CookieStorage();
 const getToken = (): string => cookieStorage.getItem('userId') ?? '';
 
 export class CampaignService {
-  // static create = (campaignName) => {
-  //   firestore
-  //     .collection(EFirestoreCollections.USERS)
-  //     .doc(getToken())
-  //     .collection(EFirestoreCollections.CAMPAIGNS)
-  //     .doc()
-  //     .set({
-  //       name: campaignName,
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error writing document: ', error);
-  //     });
-  // }
+  static create = (campaignName: string) => {
+    firestore
+      .collection(EFirestoreCollections.USERS)
+      .doc(getToken())
+      .collection(EFirestoreCollections.CAMPAIGNS)
+      .doc()
+      .set({
+        name: campaignName,
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+      });
+  };
 
   static list(): Promise<CampaignsState['data'] | void> {
     return firestore
@@ -30,7 +30,6 @@ export class CampaignService {
       .collection(EFirestoreCollections.CAMPAIGNS).get()
       .then((res) => res.docs.reduce((campaigns, obj) => {
         const temp = campaigns;
-
         temp[obj.id] = {
           id: obj.id,
           name: obj.data().name,

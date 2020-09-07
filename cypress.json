@@ -1,6 +1,6 @@
 {
   "experimentalComponentTesting": true,
-  "componentFolder": "src",
+  "componentFolder": "./src/components",
   "integrationFolder": "cypress/integration",
   "testFiles": [
     "**/*.spec.ts",

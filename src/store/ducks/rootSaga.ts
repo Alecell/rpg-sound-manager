@@ -1,10 +1,11 @@
-import { all, takeLatest } from 'redux-saga/effects';
+import { all, fork } from 'redux-saga/effects';
 
-import { loadCampaigns } from './campaigns/sagas';
-import { CampaignsRequestTypes } from './campaigns/types';
+import { campaignWatcher } from './campaigns/sagas';
+import { sessionWatcher } from './sessions/sagas';
 
 export function* rootSaga() {
   return yield all([
-    takeLatest(CampaignsRequestTypes.LOAD_REQUEST, loadCampaigns),
+    fork(campaignWatcher),
+    fork(sessionWatcher),
   ]);
 }

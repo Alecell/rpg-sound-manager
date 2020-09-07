@@ -1,0 +1,14 @@
+@import 'styles/mixins';
+@import 'styles/variables';
+
+.mainWrap {
+  display: flex;
+
+  .containerMain {
+    height: calc(100vh - #{$header-height});
+    margin-top: 55px;
+    padding: 34px;
+    width: 100%;
+    @include size-fix;
+  }
+}

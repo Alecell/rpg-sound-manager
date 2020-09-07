@@ -1,11 +1,20 @@
 import React from 'react';
 import { Route, Switch, RouteProps } from 'react-router-dom';
 
-import { RootPage } from 'pages';
+import { routes } from 'constants/routes';
+import {
+  RootPage,
+  CampaignPage,
+} from 'pages';
 
 const rootRoutes: RouteProps[] = [
   {
-    path: '/',
+    path: routes.campaign().exec(),
+    exact: true,
+    component: CampaignPage,
+  },
+  {
+    path: routes.root().exec(),
     exact: true,
     component: RootPage,
   },

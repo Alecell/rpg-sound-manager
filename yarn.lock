@@ -14323,6 +14323,11 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
+smart-routes@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/smart-routes/-/smart-routes-0.0.8.tgz#51aa11de5f9f4600e4b5aabcc92d334952610afd"
+  integrity sha512-WilfWtkisgv7/1mdxv7xgqagkz47D00ybfOcBD7MjeWnbZDFgjuBqQM6FvTjLycHJ/pPy5cf53l/yXt+zwnuRA==
+
 snapdragon-node@^2.0.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/snapdragon-node/-/snapdragon-node-2.1.1.tgz#6c175f86ff14bdb0724563e8f3c1b021a286853b"

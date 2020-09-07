@@ -1,18 +1,24 @@
-import { IRequestState } from '../types';
+import { RequestState } from '../types';
 
-interface ICampaign {
+export interface ICampaign {
   id: string;
   name: string;
 }
 
 export enum CampaignsRequestTypes {
-  LOAD_REQUEST = '@campaigns/LOAD_REQUEST',
-  LOAD_SUCCESS = '@campaigns/LOAD_SUCCESS',
-  LOAD_FAILURE = '@campaigns/LOAD_FAILURE',
+  LIST_REQUEST = '@campaigns/LIST_REQUEST',
+  LIST_SUCCESS = '@campaigns/LIST_SUCCESS',
+  LIST_FAILURE = '@campaigns/LIST_FAILURE',
+
+  CREATE_REQUEST = '@campaigns/CREATE_REQUEST',
+  CREATE_SUCCESS = '@campaigns/CREATE_SUCCESS',
+  CREATE_FAILURE = '@campaigns/CREATE_FAILURE',
 }
 
 export enum CampaignsTypes {
-  UPDATE_VIEWING_CAMPAIGN = 'UPDATE_VIEWING_CAMPAIGN',
+  APPEND_ON_LIST = '@campaign/APPEND_ON_LIST'
 }
 
-export type CampaignsState = IRequestState<ICampaign>;
+export type CampaignsState = RequestState<ICampaign>;
+export type ListCampaignsState = RequestState<ICampaign>;
+export type CreateCampaignsState = RequestState;

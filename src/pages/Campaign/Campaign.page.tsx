@@ -1,52 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
+import { routes } from 'constants/routes';
 import { RootState } from 'interfaces/rootState';
 import { IUrlParams } from 'interfaces/urlParams';
-import { CampaignActions } from 'store/ducks/campaigns/actions';
+import { SessionActions } from 'store/ducks/sessions/actions';
 
 import Header from 'components/Header';
-import { routes } from 'constants/routes';
-import DialogCreateCampaign from './components/dialogs/createCampaign/createCampaign';
+import DialogCreateCampaign from './components/dialogs/createSession/createSession';
 
-import scss from './Root.module.scss';
+import scss from './Campaign.module.scss';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
-    campaigns: state.campaigns,
+    sessions: state.sessions,
   }), shallowEqual,
 );
 
-const RootPage = () => {
+const CampaignPage = () => {
   const store = useRootStore();
-  const dispatch = useDispatch();
   const history = useHistory();
+  const urlParams = useParams<IUrlParams>();
+  const dispatch = useDispatch();
+
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const toggleCreateDialog = (status: boolean) => () => {
     setShowCreateDialog(status);
   };
 
-  const goToCampaignPage = (campaignId: IUrlParams['campaignId']) => () => {
-    history.push(routes.campaign(campaignId).exec());
+  const goToSessionPage = (sessionId: IUrlParams['sessionId']) => () => {
+    history.push(routes.campaign(urlParams.campaignId).session(sessionId).exec());
   };
 
   const renderButtons = () => (
     <div>
       {
         Object
-          .keys(store.campaigns.list.data)
+          .keys(store.sessions.list.data)
           .map((key) => {
-            const id = store.campaigns.list.data[key].id;
+            const id = store.sessions.list.data[key].id;
 
             return (
               <button
                 key={id}
                 type="button"
-                onClick={goToCampaignPage(id)}
+                onClick={goToSessionPage(id)}
               >
-                { store.campaigns.list.data[key].name }
+                { store.sessions.list.data[key].name }
               </button>
             );
           })
@@ -55,8 +57,8 @@ const RootPage = () => {
   );
 
   useEffect(() => {
-    dispatch(CampaignActions.list.request());
-  }, [dispatch]);
+    dispatch(SessionActions.list.request(urlParams.campaignId));
+  }, [dispatch, urlParams.campaignId]);
 
   return (
     <div className={scss.mainWrap}>
@@ -66,7 +68,7 @@ const RootPage = () => {
           type="button"
           onClick={toggleCreateDialog(true)}
         >
-          NOVA CAMPANHA
+          NOVA SESSÃO
         </button>
         { renderButtons() }
       </main>
@@ -78,4 +80,4 @@ const RootPage = () => {
   );
 };
 
-export default RootPage;
+export default CampaignPage;
