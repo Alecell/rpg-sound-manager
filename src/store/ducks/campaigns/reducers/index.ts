@@ -1,11 +1,9 @@
 import { combineReducers } from 'redux';
 
-// import { add } from './add';
+import { create } from './create';
 import { list } from './list';
-// import { get } from './get';
 
 export const campaignsReducer = combineReducers({
-  // get,
   list,
-  // add,
+  create,
 });
