@@ -1,17 +1,18 @@
 import {
   call, put, take, fork, select, all,
-} from 'redux-saga/effects';
+} from 'typed-redux-saga';
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
 import { IUrlParams } from 'interfaces/urlParams';
 import { SessionService } from 'services/sessions';
-import { SessionActions } from './actions';
-import { SessionsRequestTypes, ISession } from './types';
+import { SessionActions } from '../actions';
+import { SessionsRequestTypes, ISession } from '../types';
+import { listSessionRequestAction, createSessionRequestAction } from './types';
 
 export function* listSessions(campaignId: string) {
   try {
-    const sessions = yield call(SessionService.list, campaignId);
+    const sessions = yield* call(SessionService.list, campaignId);
 
     yield put(SessionActions.list.success(sessions));
   } catch (err) {
@@ -39,8 +40,10 @@ export function* createSession(
 
 export function* watchListSessions() {
   while (true) {
-    const sessions = yield select((state: RootState) => state.sessions.list.data);
-    const { payload } = yield take(SessionsRequestTypes.LIST_REQUEST);
+    const sessions = yield* select((state: RootState) => state.sessions.list.data);
+    const { payload } = yield* take<listSessionRequestAction>(
+      SessionsRequestTypes.LIST_REQUEST,
+    );
     if (isEmpty(sessions)) {
       yield fork(listSessions, payload.campaignId);
     }
@@ -49,7 +52,9 @@ export function* watchListSessions() {
 
 export function* watchCreateSession() {
   while (true) {
-    const { payload } = yield take(SessionsRequestTypes.CREATE_REQUEST);
+    const { payload } = yield* take<createSessionRequestAction>(
+      SessionsRequestTypes.CREATE_REQUEST,
+    );
     yield fork(createSession, payload.campaignId, payload.sessionName);
   }
 }

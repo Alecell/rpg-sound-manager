@@ -1,13 +1,13 @@
 import { Reducer } from 'redux';
 
-import { CreateCampaignsState, CampaignsRequestTypes } from '../types';
+import { CreateCampaignState, CampaignsRequestTypes } from '../types';
 
-export const INITIAL_STATE: CreateCampaignsState = {
+export const INITIAL_STATE: CreateCampaignState = {
   loading: false,
   error: false,
 };
 
-export const create: Reducer<CreateCampaignsState> = (store = INITIAL_STATE, action) => {
+export const create: Reducer<CreateCampaignState> = (store = INITIAL_STATE, action) => {
   if (action.type === CampaignsRequestTypes.CREATE_REQUEST) {
     return {
       loading: true,

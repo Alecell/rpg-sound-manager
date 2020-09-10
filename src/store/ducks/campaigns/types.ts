@@ -13,12 +13,16 @@ export enum CampaignsRequestTypes {
   CREATE_REQUEST = '@campaigns/CREATE_REQUEST',
   CREATE_SUCCESS = '@campaigns/CREATE_SUCCESS',
   CREATE_FAILURE = '@campaigns/CREATE_FAILURE',
+
+  GET_BY_ID_REQUEST = '@campaigns/GET_BY_ID_REQUEST',
+  GET_BY_ID_SUCCESS = '@campaigns/GET_BY_ID_SUCCESS',
+  GET_BY_ID_FAILURE = '@campaigns/GET_BY_ID_FAILURE',
 }
 
 export enum CampaignsTypes {
-  APPEND_ON_LIST = '@campaign/APPEND_ON_LIST'
+  APPEND_ON_LIST = '@campaigns/APPEND_ON_LIST'
 }
 
-export type CampaignsState = RequestState<ICampaign>;
 export type ListCampaignsState = RequestState<ICampaign>;
-export type CreateCampaignsState = RequestState;
+export type CreateCampaignState = RequestState;
+export type GetCampaignState = RequestState;

@@ -2,14 +2,15 @@ import { CookieStorage } from 'cookie-storage';
 
 import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
-import { CampaignsState } from 'store/ducks/campaigns/types';
+import { ICampaign, ListCampaignsState } from 'store/ducks/campaigns/types';
+import { EmptyObject } from 'types/emptyObject';
 
 const cookieStorage = new CookieStorage();
 
 const getToken = (): string => cookieStorage.getItem('userId') ?? '';
 
 export class CampaignService {
-  static create = (campaignName: string) => {
+  static create = (campaignName: ICampaign['name']) => {
     firestore
       .collection(EFirestoreCollections.USERS)
       .doc(getToken())
@@ -23,7 +24,7 @@ export class CampaignService {
       });
   };
 
-  static list(): Promise<CampaignsState['data'] | void> {
+  static list(): Promise<ListCampaignsState['data'] | EmptyObject> {
     return firestore
       .collection(EFirestoreCollections.USERS)
       .doc(getToken())
@@ -36,28 +37,31 @@ export class CampaignService {
         };
 
         return temp;
-      }, {} as CampaignsState['data']))
+      }, {} as ListCampaignsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {};
       });
   }
 
-  // static getById = (campaignId) => firestore
-  //   .collection(EFirestoreCollections.USERS)
-  //   .doc(getToken())
-  //   .collection(EFirestoreCollections.CAMPAIGNS)
-  //   .doc(campaignId)
-  //   .get()
-  //   .then((res) => {
-  //     const data = res.data() || {};
+  static getById(campaignId: ICampaign['id']): Promise<ICampaign | EmptyObject> {
+    return firestore
+      .collection(EFirestoreCollections.USERS)
+      .doc(getToken())
+      .collection(EFirestoreCollections.CAMPAIGNS)
+      .doc(campaignId)
+      .get()
+      .then((res) => {
+        const data = res.data() || {};
 
-  //     return {
-  //       id: campaignId,
-  //       name: data.name,
-  //       urlName: data.urlName,
-  //     };
-  //   })
-  //   .catch((error) => {
-  //     console.error('Error writing document: ', error);
-  //   })
+        return {
+          id: campaignId,
+          name: data.name,
+        } as ICampaign;
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+        return {};
+      });
+  }
 }

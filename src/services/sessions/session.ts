@@ -29,7 +29,7 @@ export class SessionService {
       });
   }
 
-  static list(campaignId: string) {
+  static list(campaignId: IUrlParams['campaignId']) {
     return firestore
       .collection(EFirestoreCollections.USERS)
       .doc(getToken())
@@ -49,20 +49,21 @@ export class SessionService {
       }, {} as ListSessionsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {};
       });
   }
 
   // static getById(campaignId: string, sessionId: string) {
   //   return firestore
   //     .collection(EFirestoreCollections.USERS)
-  //     .doc(cookieStorage.getItem('userId'))
+  //     .doc(getToken())
   //     .collection(EFirestoreCollections.CAMPAIGNS)
   //     .doc(campaignId)
   //     .collection(EFirestoreCollections.SESSIONS)
   //     .doc(sessionId)
   //     .get()
   //     .then((res) => {
-  //       const data = res.data();
+  //       const data = res.data() || {};
 
   //       return {
   //         id: sessionId,

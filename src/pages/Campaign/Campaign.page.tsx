@@ -8,6 +8,7 @@ import { IUrlParams } from 'interfaces/urlParams';
 import { SessionActions } from 'store/ducks/sessions/actions';
 
 import Header from 'components/Header';
+import { CampaignActions } from 'store/ducks/campaigns/actions';
 import DialogCreateCampaign from './components/dialogs/createSession/createSession';
 
 import scss from './Campaign.module.scss';
@@ -58,6 +59,7 @@ const CampaignPage = () => {
 
   useEffect(() => {
     dispatch(SessionActions.list.request(urlParams.campaignId));
+    dispatch(CampaignActions.getById.request(urlParams.campaignId));
   }, [dispatch, urlParams.campaignId]);
 
   return (
