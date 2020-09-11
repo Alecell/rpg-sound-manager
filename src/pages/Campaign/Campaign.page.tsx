@@ -58,8 +58,8 @@ const CampaignPage = () => {
   );
 
   useEffect(() => {
-    dispatch(SessionActions.list.request(urlParams.campaignId));
-    dispatch(CampaignActions.getById.request(urlParams.campaignId));
+    dispatch(SessionActions.list.request({ campaignId: urlParams.campaignId }));
+    dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
   }, [dispatch, urlParams.campaignId]);
 
   return (

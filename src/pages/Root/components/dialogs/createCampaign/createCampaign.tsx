@@ -27,7 +27,7 @@ const DialogCreateCampaign = (props: ICreateCampaignProps) => {
 
   const addSession = (e: submitEvent) => {
     e.preventDefault();
-    dispatch(CampaignActions.create.request(campaignName));
+    dispatch(CampaignActions.create.request({ campaignName }));
     closeDialog();
   };
 

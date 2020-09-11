@@ -12,7 +12,7 @@ import { RootState } from 'interfaces/rootState';
 import { CampaignService } from 'services/campaign';
 import { CampaignActions } from '../actions';
 import { CampaignsRequestTypes, ICampaign } from '../types';
-import { getByIdRequestAction, createRequestAction } from './types';
+import { getByIdCampaignRequestAction, createCampaignRequestAction } from './types';
 
 export function* listCampaigns() {
   try {
@@ -62,7 +62,7 @@ export function* watchListCampaigns() {
 
 export function* watchCreateCampaign() {
   while (true) {
-    const { payload } = yield* take<createRequestAction>(
+    const { payload } = yield* take<createCampaignRequestAction>(
       CampaignsRequestTypes.CREATE_REQUEST,
     );
     yield fork(createCampaign, payload.campaignName);
@@ -71,7 +71,7 @@ export function* watchCreateCampaign() {
 
 export function* watchGetByIdCampaign() {
   while (true) {
-    const { payload } = yield* take<getByIdRequestAction>(
+    const { payload } = yield* take<getByIdCampaignRequestAction>(
       CampaignsRequestTypes.GET_BY_ID_REQUEST,
     );
 
