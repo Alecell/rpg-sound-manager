@@ -1,4 +1,5 @@
 import { CampaignActions } from '../actions';
 
-export type getByIdCampaignRequestAction = ReturnType<typeof CampaignActions.getById.request>;
-export type createCampaignRequestAction = ReturnType<typeof CampaignActions.create.request>;
+export type ListCampaignRequestAction = ReturnType<typeof CampaignActions.list.request>;
+export type CreateCampaignRequestAction = ReturnType<typeof CampaignActions.create.request>;
+export type GetByIdCampaignRequestAction = ReturnType<typeof CampaignActions.getById.request>;

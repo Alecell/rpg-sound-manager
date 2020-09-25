@@ -1,6 +1,7 @@
-import { Reducer } from 'redux';
+import { Action, createReducer } from 'typesafe-actions';
 
-import { ListSessionsState, SessionsRequestTypes } from '../types';
+import { SessionActions } from '../actions';
+import { ListSessionsState } from '../types';
 
 export const INITIAL_STATE: ListSessionsState = {
   data: {},
@@ -8,32 +9,26 @@ export const INITIAL_STATE: ListSessionsState = {
   error: false,
 };
 
-export const list: Reducer<ListSessionsState> = (store = INITIAL_STATE, action) => {
-  if (action.type === SessionsRequestTypes.LIST_REQUEST) {
-    return {
-      ...store,
-      loading: true,
-      error: false,
-    };
-  }
-
-  if (action.type === SessionsRequestTypes.LIST_SUCCESS) {
-    return {
-      ...store,
-      data: action.payload,
-      loading: false,
-      error: false,
-    };
-  }
-
-  if (action.type === SessionsRequestTypes.LIST_FAILURE) {
-    return {
-      ...store,
-      data: {},
-      loading: false,
-      error: true,
-    };
-  }
-
-  return store;
-};
+export const list = createReducer<ListSessionsState, Action>(INITIAL_STATE)
+  .handleAction(SessionActions.list.request, (store) => ({
+    ...store,
+    loading: true,
+    error: false,
+  }))
+  .handleAction(SessionActions.list.success, (store, action) => ({
+    data: action.payload.sessionList,
+    loading: false,
+    error: false,
+  }))
+  .handleAction(SessionActions.list.failure, () => ({
+    data: {},
+    loading: false,
+    error: true,
+  }))
+  .handleAction(SessionActions.list.append, (store, action) => ({
+    ...store,
+    data: {
+      ...store.data,
+      [action.payload.session.id]: action.payload.session,
+    },
+  }));

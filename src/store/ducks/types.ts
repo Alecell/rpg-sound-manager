@@ -1,18 +1,18 @@
-export type IData<Type> = {
+export type Data<Type> = {
   [key: string]: Type;
 };
 
-export interface IDataRequestState<PayloadType> {
-  data: IData<PayloadType>;
+export interface DataRequestState<PayloadType> {
+  data: Data<PayloadType>;
   loading: boolean;
   error: boolean;
 }
 
-export interface IRequestState {
+export interface NoDataRequestState {
   loading: boolean;
   error: boolean;
 }
 
 export type RequestState<
   StateType = void
-> = StateType extends void ? IRequestState : IDataRequestState<StateType>;
+> = StateType extends void ? NoDataRequestState : DataRequestState<StateType>;

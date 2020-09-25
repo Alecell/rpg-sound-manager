@@ -1,6 +1,6 @@
 import { RequestState } from '../types';
 
-export interface ICampaign {
+export interface Campaign {
   id: string;
   name: string;
 }
@@ -23,6 +23,6 @@ export enum CampaignsTypes {
   APPEND_ON_LIST = '@campaigns/APPEND_ON_LIST'
 }
 
-export type ListCampaignsState = RequestState<ICampaign>;
+export type ListCampaignsState = RequestState<Campaign>;
 export type CreateCampaignState = RequestState;
 export type GetCampaignState = RequestState;

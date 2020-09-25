@@ -1,13 +1,17 @@
-import { EmptyObject } from 'types/emptyObject';
-import { ICampaign, ListCampaignsState } from '../types';
+import { Campaign, ListCampaignsState } from '../types';
 
-export type CampaignListSuccessAction = ListCampaignsState['data'] | EmptyObject;
-export type CampaignListAppendAction = ICampaign | EmptyObject;
+export interface CampaignListSuccessAction {
+  campaignList: ListCampaignsState['data'];
+}
+
+export interface CampaignListAppendAction {
+  campaign: Campaign;
+}
 
 export interface CampaignCreateRequestAction {
-  campaignName: ICampaign['name'];
+  campaignName: Campaign['name'];
 }
 
 export interface CampaignGetByIdRequestAction {
-  campaignId: ICampaign['id'];
+  campaignId: Campaign['id'];
 }

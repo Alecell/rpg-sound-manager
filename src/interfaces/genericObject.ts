@@ -1,3 +1,3 @@
-export interface IGenericObject<T = any> {
+export interface GenericObject<T = any> {
   [key: string]: T;
 }

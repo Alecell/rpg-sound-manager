@@ -1,13 +1,14 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
+
 import {
-  CampaignsRequestTypes,
-  CampaignsTypes,
+  CampaignsTypes, CampaignsRequestTypes,
 } from '../types';
+
 import {
-  CampaignCreateRequestAction,
-  CampaignGetByIdRequestAction,
   CampaignListAppendAction,
   CampaignListSuccessAction,
+  CampaignCreateRequestAction,
+  CampaignGetByIdRequestAction,
 } from './types';
 
 export class CampaignActions {

@@ -4,25 +4,31 @@ import {
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
-import { IUrlParams } from 'interfaces/urlParams';
-import { SessionService } from 'services/sessions';
+import { SessionService } from 'services/api/session/session';
+import { Campaign } from 'store/ducks/campaigns/types';
 import { SessionActions } from '../actions';
-import { SessionsRequestTypes, ISession } from '../types';
-import { listSessionRequestAction, createSessionRequestAction } from './types';
+import { SessionsRequestTypes, Session, ListSessionsState } from '../types';
+import {
+  ListSessionRequestAction,
+  CreateSessionRequestAction,
+  GetByIdSessionRequestAction,
+} from './types';
 
-export function* listSessions(campaignId: string) {
+export function* listSessions(campaignId: Campaign['id']) {
   try {
     const sessions = yield* call(SessionService.list, campaignId);
 
-    yield put(SessionActions.list.success(sessions));
+    yield put(SessionActions.list.success({
+      sessionList: sessions as ListSessionsState['data'],
+    }));
   } catch (err) {
     yield put(SessionActions.list.failure());
   }
 }
 
 export function* createSession(
-  campaignId: IUrlParams['campaignId'],
-  sessionName: ISession['name'],
+  campaignId: Campaign['id'],
+  sessionName: Session['name'],
 ) {
   try {
     yield call(SessionService.create, campaignId, sessionName);
@@ -34,6 +40,20 @@ export function* createSession(
   }
 }
 
+export function* getByIdSession(
+  campaignId: Campaign['id'],
+  sessionId: Session['id'],
+) {
+  try {
+    const session = yield* call(SessionService.getById, campaignId, sessionId);
+
+    yield put(SessionActions.list.append({ session: session as Session }));
+    yield put(SessionActions.getById.success());
+  } catch (err) {
+    yield put(SessionActions.getById.failure());
+  }
+}
+
 /**
  * WATCHERS
  */
@@ -41,7 +61,7 @@ export function* createSession(
 export function* watchListSessions() {
   while (true) {
     const sessions = yield* select((state: RootState) => state.sessions.list.data);
-    const { payload } = yield* take<listSessionRequestAction>(
+    const { payload } = yield* take<ListSessionRequestAction>(
       SessionsRequestTypes.LIST_REQUEST,
     );
     if (isEmpty(sessions)) {
@@ -52,10 +72,20 @@ export function* watchListSessions() {
 
 export function* watchCreateSession() {
   while (true) {
-    const { payload } = yield* take<createSessionRequestAction>(
+    const { payload } = yield* take<CreateSessionRequestAction>(
       SessionsRequestTypes.CREATE_REQUEST,
     );
     yield fork(createSession, payload.campaignId, payload.sessionName);
+  }
+}
+
+export function* watchGetByIdSession() {
+  while (true) {
+    const { payload } = yield* take<GetByIdSessionRequestAction>(
+      SessionsRequestTypes.GET_BY_ID_REQUEST,
+    );
+
+    yield fork(getByIdSession, payload.campaignId, payload.sessionId);
   }
 }
 
@@ -63,5 +93,6 @@ export function* sessionWatcher() {
   return yield all([
     fork(watchListSessions),
     fork(watchCreateSession),
+    fork(watchGetByIdSession),
   ]);
 }

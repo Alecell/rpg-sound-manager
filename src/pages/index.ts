@@ -1,7 +1,5 @@
-import RootPage from './Root';
-import CampaignPage from './Campaign';
+import ManagerSwitcher from './Manager';
 
 export {
-  RootPage,
-  CampaignPage,
+  ManagerSwitcher,
 };

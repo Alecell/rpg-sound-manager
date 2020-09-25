@@ -1,5 +1,7 @@
-import { Reducer } from 'redux';
-import { ListCampaignsState, CampaignsRequestTypes, CampaignsTypes } from '../types';
+import { Action, createReducer } from 'typesafe-actions';
+
+import { CampaignActions } from '../actions';
+import { ListCampaignsState } from '../types';
 
 export const INITIAL_STATE: ListCampaignsState = {
   data: {},
@@ -7,42 +9,26 @@ export const INITIAL_STATE: ListCampaignsState = {
   error: false,
 };
 
-export const list: Reducer<ListCampaignsState> = (store = INITIAL_STATE, action) => {
-  if (action.type === CampaignsRequestTypes.LIST_REQUEST) {
-    return {
-      ...store,
-      loading: true,
-      error: false,
-    };
-  }
-
-  if (action.type === CampaignsRequestTypes.LIST_SUCCESS) {
-    return {
-      ...store,
-      data: action.payload,
-      loading: false,
-      error: false,
-    };
-  }
-
-  if (action.type === CampaignsRequestTypes.LIST_FAILURE) {
-    return {
-      ...store,
-      data: {},
-      loading: false,
-      error: true,
-    };
-  }
-
-  if (action.type === CampaignsTypes.APPEND_ON_LIST) {
-    return {
-      ...store,
-      data: {
-        ...store.data,
-        [action.payload.campaign.id]: action.payload.campaign,
-      },
-    };
-  }
-
-  return store;
-};
+export const list = createReducer<ListCampaignsState, Action>(INITIAL_STATE)
+  .handleAction(CampaignActions.list.request, (store) => ({
+    ...store,
+    loading: true,
+    error: false,
+  }))
+  .handleAction(CampaignActions.list.success, (store, action) => ({
+    data: action.payload.campaignList,
+    loading: false,
+    error: false,
+  }))
+  .handleAction(CampaignActions.list.failure, (store) => ({
+    data: {},
+    loading: false,
+    error: true,
+  }))
+  .handleAction(CampaignActions.list.append, (store, action) => ({
+    ...store,
+    data: {
+      ...store.data,
+      [action.payload.campaign.id]: action.payload.campaign,
+    },
+  }));

@@ -1,33 +1,23 @@
-import { Reducer } from 'redux';
+import { Action, createReducer } from 'typesafe-actions';
 
-import { GetCampaignState, CampaignsRequestTypes } from '../types';
+import { GetCampaignState } from '../types';
+import { CampaignActions } from '../actions';
 
 export const INITIAL_STATE: GetCampaignState = {
   loading: false,
   error: false,
 };
 
-export const getById: Reducer<GetCampaignState> = (store = INITIAL_STATE, action) => {
-  if (action.type === CampaignsRequestTypes.GET_BY_ID_REQUEST) {
-    return {
-      loading: true,
-      error: false,
-    };
-  }
-
-  if (action.type === CampaignsRequestTypes.GET_BY_ID_SUCCESS) {
-    return {
-      loading: false,
-      error: false,
-    };
-  }
-
-  if (action.type === CampaignsRequestTypes.GET_BY_ID_FAILURE) {
-    return {
-      loading: false,
-      error: true,
-    };
-  }
-
-  return store;
-};
+export const getById = createReducer<GetCampaignState, Action>(INITIAL_STATE)
+  .handleAction(CampaignActions.getById.request, () => ({
+    loading: true,
+    error: false,
+  }))
+  .handleAction(CampaignActions.getById.success, () => ({
+    loading: false,
+    error: false,
+  }))
+  .handleAction(CampaignActions.getById.failure, () => ({
+    loading: false,
+    error: true,
+  }));

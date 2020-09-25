@@ -2,7 +2,6 @@
   box-sizing: border-box;
 }
 
-// TODO: Isso aqui tem que ficar de um modo mais interessante
 @mixin transition(
   $time: 0.34s,
   $prop: all,
@@ -10,7 +9,8 @@
 ) {
   transition: $prop $time $type;
 }
-
+  
+// TODO: Isso aqui tem que ficar de um modo mais interessante
 @mixin absolute(
   $position: absolute,
   $top: 0,
