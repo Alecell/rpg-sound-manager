@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import first from 'lodash.first';
 import {
   Dialog,
   DialogContent,
@@ -7,10 +8,13 @@ import {
   Button,
 } from '@material-ui/core';
 
-import { CreateProps, SubmitEvent, ChangeNameEvent } from './types';
+import {
+  CreateProps, SubmitEvent, ChangeNameEvent, UploadEvent,
+} from './types';
 
 const DialogCreateCampaign = (props: CreateProps) => {
   const [name, setName] = useState('');
+  const [file, setFile] = useState<File>();
 
   const closeDialog = () => {
     setName('');
@@ -21,11 +25,22 @@ const DialogCreateCampaign = (props: CreateProps) => {
     setName(e.currentTarget.value);
   };
 
+  const updateFile = (e: UploadEvent) => {
+    setFile(first(e.currentTarget.files));
+  };
+
   const handleSubmit = (e: SubmitEvent) => {
     e.preventDefault();
     closeDialog();
-    props.onSubmit(name);
+    props.onSubmit(name, file);
   };
+
+  const renderFileInput = () => (
+    <input
+      type="file"
+      onChange={updateFile}
+    />
+  );
 
   return (
     <Dialog open={props.open} onClose={closeDialog}>
@@ -36,6 +51,7 @@ const DialogCreateCampaign = (props: CreateProps) => {
             value={name}
             onChange={updateName}
           />
+          { props.withInput && renderFileInput() }
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog}>Sair</Button>
@@ -51,5 +67,9 @@ const DialogCreateCampaign = (props: CreateProps) => {
     </Dialog>
   );
 };
+
+DialogCreateCampaign.defaultProps = {
+  withInput: false,
+} as CreateProps;
 
 export default DialogCreateCampaign;

@@ -15,14 +15,11 @@ export const list = createReducer<ListScenesState, Action>(INITIAL_STATE)
     loading: true,
     error: false,
   }))
-  .handleAction(SceneActions.list.success, (store, action) => {
-    console.log(action);
-    return {
-      data: action.payload.sceneList,
-      loading: false,
-      error: false,
-    };
-  })
+  .handleAction(SceneActions.list.success, (store, action) => ({
+    data: action.payload.sceneList,
+    loading: false,
+    error: false,
+  }))
   .handleAction(SceneActions.list.failure, () => ({
     data: {},
     loading: false,

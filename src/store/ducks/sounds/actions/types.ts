@@ -1,12 +1,12 @@
+import { UrlParams } from 'interfaces/urlParams';
+import { Mix } from '../../mixes/types';
 import { Scene } from '../../scenes/types';
 import { Session } from '../../sessions/types';
 import { Campaign } from '../../campaigns/types';
 import { Sound, ListSoundsState } from '../types';
 
 export interface SoundListRequestAction {
-  campaignId: Campaign['id'];
-  sessionId: Session['id'];
-  sceneId: Scene['id'];
+  urlParams: UrlParams;
 }
 
 export interface SoundListSuccessAction {
@@ -14,10 +14,9 @@ export interface SoundListSuccessAction {
 }
 
 export interface SoundCreateRequestAction {
-  campaignId: Campaign['id'];
-  sessionId: Session['id'];
-  sceneId: Scene['id'];
+  url: UrlParams;
   soundName: Sound['name'];
+  soundFile: File;
 }
 
 export interface SoundGetByIdRequestAction {

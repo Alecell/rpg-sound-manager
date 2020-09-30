@@ -3,6 +3,13 @@ import { RequestState } from '../types';
 export interface Sound {
   id: string;
   name: string;
+  file: string;
+}
+
+export interface SoundOptions {
+  start: number;
+  end: number;
+  volume: number;
 }
 
 export enum SoundRequestTypes {

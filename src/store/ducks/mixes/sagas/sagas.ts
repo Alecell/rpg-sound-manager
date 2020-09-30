@@ -20,8 +20,6 @@ export function* listMixes(
   try {
     const mixes = yield* call(MixService.list, campaignId, sessionId, sceneId);
 
-    console.log(mixes);
-
     yield put(MixActions.list.success({
       mixList: mixes as ListMixesState['data'],
     }));

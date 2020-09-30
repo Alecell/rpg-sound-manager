@@ -44,12 +44,11 @@ const ScenePage = () => {
     );
   };
 
-  const createSound = (name: string) => {
+  const createSound = (name: string, soundFile: File | undefined) => {
     dispatch(SoundActions.create.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-      sceneId: urlParams.sceneId,
+      url: urlParams,
       soundName: name,
+      soundFile: soundFile as File,
     }));
   };
 
@@ -73,7 +72,6 @@ const ScenePage = () => {
             <button
               key={id}
               type="button"
-              // onClick={goToMixPage(id)}
             >
               { store.sounds.list.data[key].name }
             </button>
@@ -108,11 +106,7 @@ const ScenePage = () => {
       sessionId: urlParams.sessionId,
       sceneId: urlParams.sceneId,
     }));
-    dispatch(SoundActions.list.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-      sceneId: urlParams.sceneId,
-    }));
+    dispatch(SoundActions.list.request({ urlParams }));
     dispatch(SceneActions.getById.request({
       campaignId: urlParams.campaignId,
       sessionId: urlParams.sessionId,
@@ -123,7 +117,14 @@ const ScenePage = () => {
       sessionId: urlParams.sessionId,
     }));
     dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
-  }, [dispatch, urlParams.campaignId, urlParams.sceneId, urlParams.sessionId]);
+  }, [
+    dispatch,
+    urlParams,
+    urlParams.campaignId,
+    urlParams.mixId,
+    urlParams.sceneId,
+    urlParams.sessionId,
+  ]);
 
   return (
     <>
@@ -144,6 +145,7 @@ const ScenePage = () => {
       { renderButtonsSound() }
 
       <DialogCreate
+        withInput
         open={showCreateSoundDialog}
         label="Nome do som"
         onClose={toggleCreateDialog(false, 'sound')}

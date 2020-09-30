@@ -84,8 +84,6 @@ export class MixService {
       .then((res) => {
         const data = res.data() || {};
 
-        console.log(res);
-
         return {
           id: mixId,
           name: data.name,

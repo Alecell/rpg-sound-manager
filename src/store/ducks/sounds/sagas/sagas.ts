@@ -1,24 +1,19 @@
 import {
   call, put, take, fork, select, all,
 } from 'typed-redux-saga';
+import { v4 as uuid } from 'uuid';
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
-import { Scene } from 'store/ducks/scenes/types';
-import { Session } from 'store/ducks/sessions/types';
-import { Campaign } from 'store/ducks/campaigns/types';
 import { SoundService } from 'services/api/sound';
+import { UrlParams } from 'interfaces/urlParams';
 import { SoundActions } from '../actions';
 import { SoundRequestTypes, Sound, ListSoundsState } from '../types';
 import { ListSoundRequestAction, CreateSoundRequestAction } from './types';
 
-export function* listSounds(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
-) {
+export function* listSounds(urlParams: UrlParams) {
   try {
-    const sounds = yield* call(SoundService.list, campaignId, sessionId, sceneId);
+    const sounds = yield* call(SoundService.list, urlParams);
 
     yield put(SoundActions.list.success({
       soundList: sounds as ListSoundsState['data'],
@@ -29,15 +24,19 @@ export function* listSounds(
 }
 
 export function* createSound(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
+  url: UrlParams,
   soundName: Sound['name'],
+  soundFile: File,
 ) {
   try {
-    yield call(SoundService.create, campaignId, sessionId, sceneId, soundName);
-    yield call(listSounds, campaignId, sessionId, sceneId);
+    const soundUrl = yield* call(SoundService.upload, uuid(), soundFile);
 
+    if (soundUrl) {
+      yield call(SoundService.create, url, soundName, `${soundUrl.href}`);
+    } else {
+      throw new Error('Falha no upload');
+    }
+    yield call(listSounds, url);
     yield put(SoundActions.create.success());
   } catch (err) {
     yield put(SoundActions.create.failure());
@@ -55,7 +54,10 @@ export function* watchListSound() {
       SoundRequestTypes.LIST_REQUEST,
     );
     if (isEmpty(sounds)) {
-      yield fork(listSounds, payload.campaignId, payload.sessionId, payload.sceneId);
+      yield fork(
+        listSounds,
+        payload.urlParams,
+      );
     }
   }
 }
@@ -67,10 +69,9 @@ export function* watchCreateSound() {
     );
     yield fork(
       createSound,
-      payload.campaignId,
-      payload.sessionId,
-      payload.sceneId,
+      payload.url,
       payload.soundName,
+      payload.soundFile,
     );
   }
 }

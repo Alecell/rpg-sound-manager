@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { routes } from 'constants/routes';
 
 import Header from 'components/Header';
+import { SoundService } from 'services/sound';
 import RootPage from './pages/Root';
 import ScenePage from './pages/Scene';
 import SessionPage from './pages/Session';
@@ -40,6 +41,50 @@ const managerRoutes = [
   },
 ];
 
+const audio = new SoundService('https://firebasestorage.googleapis.com/v0/b/dungeon-chest-eca8d.appspot.com/o/6lsQAYz8YQd9HHRLfHMP%2Fa5678209-2749-4d3f-a842-63b351289efe.mp3?alt=media&token=a33a9d5a-4039-4f56-b997-67c56508ed75', { end: 0, start: 0, volume: 0.5 });
+const Test = () => {
+  const [volume, setVolume] = useState(0);
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    audio.volume = 0;
+    audio.onVolumeChange = (volumein: any) => {
+      setVolume(volumein);
+    };
+    audio.onTimeUpdate = (timein) => {
+      setTime(timein);
+    };
+  }, []);
+
+  return (
+    <div>
+      <button type="button" onClick={() => audio.play()}>play</button>
+      <button type="button" onClick={() => audio.pause()}>pause</button>
+      <button type="button" onClick={() => audio.mute()}>mute</button>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={volume}
+        onChange={(e) => {
+          audio.volume = e.currentTarget.value;
+        }}
+      />
+      <input
+        readOnly
+        type="range"
+        min="0"
+        max="100"
+        value={time}
+        style={{
+          width: '100%',
+          display: 'block',
+        }}
+      />
+    </div>
+  );
+};
+
 const ManagerSwitcher = () => (
   <div className={scss.mainWrap}>
     <Header />
@@ -54,6 +99,7 @@ const ManagerSwitcher = () => (
           />
         ))}
       </Switch>
+      <Test />
     </main>
   </div>
 );

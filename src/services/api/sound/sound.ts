@@ -1,51 +1,67 @@
-import { firestore } from 'config/firebase';
-import { CookieService } from 'services/cookie/cookie';
-import { Session } from 'store/ducks/sessions/types';
-import { Campaign } from 'store/ducks/campaigns/types';
+import { storage } from 'config/firebase';
+import { CookieService } from 'services/cookie';
 import { ListSoundsState } from 'store/ducks/sounds/types';
 import { ListScenesState, Scene } from 'store/ducks/scenes/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
+import { UrlParams } from 'interfaces/urlParams';
+import { sceneRequest, mixRequest, soundRequest } from '../defaultQueries';
 
 export class SoundService {
+  static upload(hash: string, file: File): Promise<URL | void> {
+    const userId = CookieService.getUserToken();
+    const fileExtension = file.name.split('.').pop();
+    const savePath = `${userId}/${hash}.${fileExtension}`;
+
+    return storage
+      .ref(savePath).put(file)
+      .then(async (res) => {
+        const url = await res.ref.getDownloadURL();
+        return new URL(url);
+      })
+      .catch((res) => {
+        console.log(res);
+      });
+  }
+
   static create(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Session['id'],
+    urlParams: UrlParams,
     soundName: Scene['name'],
+    fileUrl: string,
   ): void {
-    firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+    let request = sceneRequest(urlParams);
+
+    if (urlParams.mixId) request = mixRequest(urlParams);
+
+    request
       .collection(EFirestoreCollections.SOUNDS)
       .doc()
       .set({
         name: soundName,
+        url: fileUrl,
       })
       .catch((error) => {
         console.error('Error writing document: ', error);
       });
   }
 
-  static list(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
-  ): Promise<ListScenesState['data'] | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+  static updateConfig = (
+    urlParams: UrlParams,
+    config: any,
+  ): void => {
+    soundRequest(urlParams)
+      .set({
+        loop: config.loop,
+        startAt: config.limits.start,
+        endAt: config.limits.end,
+      }, { merge: true });
+  };
+
+  static list(urlParams: UrlParams): Promise<ListScenesState['data'] | void> {
+    let request = sceneRequest(urlParams);
+
+    if (urlParams.mixId) request = mixRequest(urlParams);
+
+    return request
       .collection(EFirestoreCollections.SOUNDS)
       .get()
       .then((res) => res.docs.reduce((sound, obj) => {
@@ -54,6 +70,7 @@ export class SoundService {
         temp[obj.id] = {
           id: obj.id,
           name: obj.data().name,
+          file: obj.data().url,
         };
 
         return temp;
@@ -63,26 +80,14 @@ export class SoundService {
       });
   }
 
-  static getById(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
-  ) {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+  static getById(urlParams: UrlParams) {
+    return sceneRequest(urlParams)
       .get()
       .then((res) => {
         const data = res.data() || {};
 
         return {
-          id: sessionId,
+          id: urlParams.sessionId,
           name: data.name,
         };
       })

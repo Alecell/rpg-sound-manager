@@ -40,12 +40,11 @@ const MixPage = () => {
     );
   };
 
-  const createSound = (name: string) => {
+  const createSound = (name: string, file: File | undefined) => {
     dispatch(SoundActions.create.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-      sceneId: urlParams.sceneId,
+      url: urlParams,
       soundName: name,
+      soundFile: file as File,
     }));
   };
 
@@ -70,6 +69,7 @@ const MixPage = () => {
   );
 
   useEffect(() => {
+    dispatch(SoundActions.list.request({ urlParams }));
     dispatch(MixActions.getById.request({
       campaignId: urlParams.campaignId,
       sessionId: urlParams.sessionId,
@@ -86,7 +86,14 @@ const MixPage = () => {
       sessionId: urlParams.sessionId,
     }));
     dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
-  }, [dispatch, urlParams.campaignId, urlParams.mixId, urlParams.sceneId, urlParams.sessionId]);
+  }, [
+    dispatch,
+    urlParams,
+    urlParams.campaignId,
+    urlParams.mixId,
+    urlParams.sceneId,
+    urlParams.sessionId,
+  ]);
 
   return (
     <>
@@ -100,6 +107,7 @@ const MixPage = () => {
       { renderButtons() }
 
       <DialogCreate
+        withInput
         open={showCreateDialog}
         label="Nome do som"
         onClose={toggleCreateDialog(false)}
