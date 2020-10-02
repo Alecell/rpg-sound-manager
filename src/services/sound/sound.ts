@@ -1,63 +1,98 @@
 import { Sound, SoundOptions } from 'store/ducks/sounds/types';
 import { isString } from 'utils/isString';
+import { ValueUpdate } from './types';
 
-export class SoundService {
-  sound: HTMLAudioElement;
+const AUDIO_START = 0;
 
+const MIN_VOLUME = 0;
+const MAX_VOLUME = 100;
+
+const MIN_NATIVE_AUDIO_VOLUME = 0;
+const MAX_NATIVE_AUDIO_VOLUME = 1;
+
+export class SoundService extends Audio {
   opts: SoundOptions;
 
-  duration = 0;
-
   constructor(soundUrl: Sound['file'], opts: SoundOptions) {
-    const onAudioLoaded = (e: any) => {
-      this.duration = e.currentTarget.duration;
-    };
+    super(soundUrl);
 
     this.opts = opts;
-    this.sound = new Audio(soundUrl);
-    this.sound.addEventListener('loadedmetadata', onAudioLoaded.bind(this));
+
+    this.addEventListener('timeupdate', this.handleAudioEnd);
   }
 
-  play() {
-    console.log(this.duration);
-    this.sound.play();
+  private handleAudioEnd(e: any) {
+    if (e.currentTarget.currentTime > this.opts.end && this.loop) {
+      this.currentTime = this.setTimeToStart();
+    } else if (e.currentTarget.currentTime > this.opts.end && !this.loop) {
+      this.stop();
+    }
   }
 
-  pause() {
-    this.sound.pause();
+  private setTimeToStart() {
+    return this.opts.start || AUDIO_START;
   }
 
   mute() {
-    this.opts.volume = 0;
-    this.sound.volume = 0;
+    this.opts.volume = MIN_VOLUME;
+    this.volume = MIN_VOLUME;
   }
 
-  set onVolumeChange(changeFn: (volume: any, event: any) => void) {
-    this.sound.addEventListener('volumechange', (e: any) => {
-      const volume = Math.round(e?.currentTarget?.volume * 100);
+  stop() {
+    this.pause();
+    this.currentTime = this.setTimeToStart();
+  }
+
+  onVolumeChange(changeFn: ValueUpdate): void {
+    this.addEventListener('volumechange', (e: any) => {
+      const volume = Math.round(e.currentTarget.volume * MAX_VOLUME);
       changeFn(volume, e);
     });
   }
 
-  set onTimeUpdate(onUpdate: (time: any, event: any) => void) {
-    this.sound.addEventListener('timeupdate', (e: any) => {
-      onUpdate(e?.currentTarget?.currentTime, e);
+  onTimeUpdate(onUpdate: ValueUpdate): void {
+    this.addEventListener('timeupdate', (e: any) => {
+      onUpdate(e.currentTarget.currentTime, e);
     });
   }
 
-  set volume(value: number | string) {
+  set start(value: number | string) {
+    let time = value;
+
+    if (isString(time)) time = parseInt(time, 10);
+
+    this.currentTime = time;
+    this.opts.start = time;
+  }
+
+  set end(value: number | string) {
+    let time = value;
+
+    if (isString(time)) time = parseInt(time, 10);
+
+    this.opts.end = time;
+  }
+
+  setVolume(value: number | string) {
     let vol: number = value as number;
 
     if (isString(value)) {
       vol = parseInt(value, 10);
     }
 
-    vol /= 100;
+    vol /= MAX_VOLUME;
 
-    if (vol > 1) vol = 1;
-    else if (vol < 0) vol = 0;
+    if (vol > MAX_NATIVE_AUDIO_VOLUME) {
+      vol = MAX_NATIVE_AUDIO_VOLUME;
+    } else if (vol < MIN_NATIVE_AUDIO_VOLUME) {
+      vol = MIN_NATIVE_AUDIO_VOLUME;
+    }
 
     this.opts.volume = vol;
-    this.sound.volume = vol;
+    this.volume = vol;
+  }
+
+  getVolume(): number {
+    return this.volume * MAX_VOLUME;
   }
 }

@@ -41,40 +41,66 @@ const managerRoutes = [
   },
 ];
 
-const audio = new SoundService('https://firebasestorage.googleapis.com/v0/b/dungeon-chest-eca8d.appspot.com/o/6lsQAYz8YQd9HHRLfHMP%2Fa5678209-2749-4d3f-a842-63b351289efe.mp3?alt=media&token=a33a9d5a-4039-4f56-b997-67c56508ed75', { end: 0, start: 0, volume: 0.5 });
+const audio = new SoundService('https://firebasestorage.googleapis.com/v0/b/dungeon-chest-eca8d.appspot.com/o/6lsQAYz8YQd9HHRLfHMP%2FWaterfall%20Sound%20Effect%20(online-audio-converter.com).mp3?alt=media&token=f0b94f61-f3bb-446d-ae8a-73a28a60d5ae', { end: 0, start: 0, volume: 0.5 });
 const Test = () => {
   const [volume, setVolume] = useState(0);
   const [time, setTime] = useState(0);
+  const [length, setLength] = useState('');
+  const [looping, setLooping] = useState(false);
 
   useEffect(() => {
     audio.volume = 0;
-    audio.onVolumeChange = (volumein: any) => {
+    audio.onVolumeChange((volumein: number) => {
       setVolume(volumein);
-    };
-    audio.onTimeUpdate = (timein) => {
+    });
+    audio.onTimeUpdate((timein: number) => {
       setTime(timein);
-    };
+    });
+    audio.addEventListener('loadedmetadata', () => {
+      setLength(audio.duration.toFixed(0));
+    });
   }, []);
 
   return (
     <div>
       <button type="button" onClick={() => audio.play()}>play</button>
       <button type="button" onClick={() => audio.pause()}>pause</button>
+      <button type="button" onClick={() => audio.stop()}>stop</button>
       <button type="button" onClick={() => audio.mute()}>mute</button>
+      <button
+        type="button"
+        onClick={() => {
+          audio.loop = !audio.loop;
+          setLooping(audio.loop);
+        }}
+      >
+        loop
+      </button>
+
+      LOOP:
+      {looping.toString()}
+      <input
+        type="number"
+        onChange={(e) => { audio.start = e.currentTarget.value; }}
+      />
+      <input
+        type="number"
+        onChange={(e) => { audio.end = e.currentTarget.value; }}
+      />
       <input
         type="range"
         min="0"
         max="100"
         value={volume}
         onChange={(e) => {
-          audio.volume = e.currentTarget.value;
+          audio.volume = parseInt(e.currentTarget.value, 10) / 100;
         }}
       />
       <input
         readOnly
         type="range"
         min="0"
-        max="100"
+        max={length}
         value={time}
         style={{
           width: '100%',
