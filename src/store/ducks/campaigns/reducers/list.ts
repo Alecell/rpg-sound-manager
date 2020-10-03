@@ -16,12 +16,15 @@ export const list = createReducer<ListCampaignsState, Action>(INITIAL_STATE)
     error: false,
   }))
   .handleAction(CampaignActions.list.success, (store, action) => ({
-    data: action.payload.campaignList,
+    data: {
+      ...store.data,
+      ...action.payload.campaignList,
+    },
     loading: false,
     error: false,
   }))
   .handleAction(CampaignActions.list.failure, (store) => ({
-    data: {},
+    ...store,
     loading: false,
     error: true,
   }))

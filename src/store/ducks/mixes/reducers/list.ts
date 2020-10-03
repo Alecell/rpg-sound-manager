@@ -16,12 +16,15 @@ export const list = createReducer<ListMixesState, Action>(INITIAL_STATE)
     error: false,
   }))
   .handleAction(MixActions.list.success, (store, action) => ({
-    data: action.payload.mixList,
+    data: {
+      ...store.data,
+      ...action.payload.mixList,
+    },
     loading: false,
     error: false,
   }))
-  .handleAction(MixActions.list.failure, () => ({
-    data: {},
+  .handleAction(MixActions.list.failure, (store) => ({
+    ...store,
     loading: false,
     error: true,
   }))

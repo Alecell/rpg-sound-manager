@@ -16,12 +16,15 @@ export const list = createReducer<ListScenesState, Action>(INITIAL_STATE)
     error: false,
   }))
   .handleAction(SceneActions.list.success, (store, action) => ({
-    data: action.payload.sceneList,
+    data: {
+      ...store.data,
+      ...action.payload.sceneList,
+    },
     loading: false,
     error: false,
   }))
-  .handleAction(SceneActions.list.failure, () => ({
-    data: {},
+  .handleAction(SceneActions.list.failure, (store) => ({
+    ...store,
     loading: false,
     error: true,
   }))
