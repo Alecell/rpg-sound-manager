@@ -1,13 +1,11 @@
-import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
+import { UrlParams } from 'interfaces/urlParams';
 import { Campaign, ListCampaignsState } from 'store/ducks/campaigns/types';
-import { CookieService } from '../../cookie';
+import { campaignRequest, userRequest } from '../defaultQueries';
 
 export class CampaignService {
   static create = (campaignName: Campaign['name']): void => {
-    firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
+    userRequest()
       .collection(EFirestoreCollections.CAMPAIGNS)
       .doc()
       .set({
@@ -19,10 +17,9 @@ export class CampaignService {
   };
 
   static list(): Promise<ListCampaignsState['data'] | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS).get()
+    return userRequest()
+      .collection(EFirestoreCollections.CAMPAIGNS)
+      .get()
       .then((res) => res.docs.reduce((campaigns, obj) => {
         const temp = campaigns;
         temp[obj.id] = {
@@ -34,22 +31,17 @@ export class CampaignService {
       }, {} as ListCampaignsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
-        return {};
       });
   }
 
-  static getById(campaignId: Campaign['id']): Promise<Campaign | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
+  static getById(urlParams: UrlParams): Promise<Campaign | void> {
+    return campaignRequest(urlParams)
       .get()
       .then((res) => {
         const data = res.data() || {};
 
         return {
-          id: campaignId,
+          id: urlParams.campaignId,
           name: data.name,
         } as Campaign;
       })

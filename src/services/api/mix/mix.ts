@@ -1,27 +1,15 @@
-import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { Mix } from 'store/ducks/mixes/types';
-import { CookieService } from 'services/cookie/cookie';
-import { Campaign } from 'store/ducks/campaigns/types';
-import { Session } from 'store/ducks/sessions/types';
-import { ListScenesState, Scene } from 'store/ducks/scenes/types';
+import { ListScenesState } from 'store/ducks/scenes/types';
+import { UrlParams } from 'interfaces/urlParams';
+import { mixRequest, sceneRequest } from '../defaultQueries';
 
 export class MixService {
   static create(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
+    urlParams: UrlParams,
     mixName: Mix['name'],
   ): void {
-    firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+    sceneRequest(urlParams)
       .collection(EFirestoreCollections.MIXES)
       .doc()
       .set({
@@ -33,19 +21,9 @@ export class MixService {
   }
 
   static list(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
+    urlParams: UrlParams,
   ): Promise<ListScenesState['data'] | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+    return sceneRequest(urlParams)
       .collection(EFirestoreCollections.MIXES)
       .get()
       .then((res) => res.docs.reduce((mix, obj) => {
@@ -64,28 +42,15 @@ export class MixService {
   }
 
   static getById(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
-    mixId: Mix['id'],
-  ) {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
-      .collection(EFirestoreCollections.MIXES)
-      .doc(mixId)
+    urlParams: UrlParams,
+  ): Promise<Mix | void> {
+    return mixRequest(urlParams)
       .get()
       .then((res) => {
         const data = res.data() || {};
 
         return {
-          id: mixId,
+          id: urlParams.mixId,
           name: data.name,
         };
       })

@@ -11,3 +11,7 @@ export interface UrlParams {
   mixId: Mix['id'];
   soundId: Sound['id'];
 }
+
+export interface UrlParamsAsObj {
+  urlParams: UrlParams;
+}

@@ -8,6 +8,7 @@ import {
 } from 'typed-redux-saga';
 import isEmpty from 'lodash.isempty';
 
+import { UrlParams } from 'interfaces/urlParams';
 import { RootState } from 'interfaces/rootState';
 import { CampaignService } from 'services/api/campaign';
 import { CampaignActions } from '../actions';
@@ -41,9 +42,9 @@ export function* createCampaign(campaignName: Campaign['name']) {
   }
 }
 
-export function* getByIdCampaign(campaignId: Campaign['id']) {
+export function* getByIdCampaign(urlParams: UrlParams) {
   try {
-    const campaign = yield* call(CampaignService.getById, campaignId);
+    const campaign = yield* call(CampaignService.getById, urlParams);
 
     yield put(CampaignActions.list.append({ campaign: campaign as Campaign }));
     yield put(CampaignActions.getById.success());
@@ -81,7 +82,7 @@ export function* watchGetByIdCampaign() {
       CampaignsRequestTypes.GET_BY_ID_REQUEST,
     );
 
-    yield fork(getByIdCampaign, payload.campaignId);
+    yield fork(getByIdCampaign, payload.urlParams);
   }
 }
 

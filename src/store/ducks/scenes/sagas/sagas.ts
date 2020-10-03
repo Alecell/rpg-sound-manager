@@ -4,19 +4,17 @@ import {
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
-import { Session } from 'store/ducks/sessions/types';
-import { Campaign } from 'store/ducks/campaigns/types';
+import { UrlParams } from 'interfaces/urlParams';
 import { SceneService } from 'services/api/scene/scene';
 import { SceneActions } from '../actions';
 import { SceneRequestTypes, Scene, ListScenesState } from '../types';
 import { ListSceneRequestAction, CreateSceneRequestAction, GetByIdSceneRequestAction } from './types';
 
 export function* listScenes(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
+  urlParams: UrlParams,
 ) {
   try {
-    const scenes = yield* call(SceneService.list, campaignId, sessionId);
+    const scenes = yield* call(SceneService.list, urlParams);
 
     yield put(SceneActions.list.success({
       sceneList: scenes as ListScenesState['data'],
@@ -27,13 +25,12 @@ export function* listScenes(
 }
 
 export function* createScene(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
+  urlParams: UrlParams,
   sceneName: Scene['name'],
 ) {
   try {
-    yield call(SceneService.create, campaignId, sessionId, sceneName);
-    yield call(listScenes, campaignId, sessionId);
+    yield call(SceneService.create, urlParams, sceneName);
+    yield call(listScenes, urlParams);
 
     yield put(SceneActions.create.success());
   } catch (err) {
@@ -42,12 +39,10 @@ export function* createScene(
 }
 
 export function* getByIdScene(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
+  urlParams: UrlParams,
 ) {
   try {
-    const scene = yield* call(SceneService.getById, campaignId, sessionId, sceneId);
+    const scene = yield* call(SceneService.getById, urlParams);
 
     yield put(SceneActions.list.append({ scene: scene as Scene }));
     yield put(SceneActions.getById.success());
@@ -67,7 +62,7 @@ export function* watchListScenes() {
       SceneRequestTypes.LIST_REQUEST,
     );
     if (isEmpty(scenes)) {
-      yield fork(listScenes, payload.campaignId, payload.sessionId);
+      yield fork(listScenes, payload.urlParams);
     }
   }
 }
@@ -79,8 +74,7 @@ export function* watchCreateScene() {
     );
     yield fork(
       createScene,
-      payload.campaignId,
-      payload.sessionId,
+      payload.urlParams,
       payload.sceneName,
     );
   }
@@ -92,7 +86,7 @@ export function* watchGetByIdScene() {
       SceneRequestTypes.GET_BY_ID_REQUEST,
     );
 
-    yield fork(getByIdScene, payload.campaignId, payload.sessionId, payload.sceneId);
+    yield fork(getByIdScene, payload.urlParams);
   }
 }
 

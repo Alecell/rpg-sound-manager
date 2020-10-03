@@ -42,7 +42,7 @@ const MixPage = () => {
 
   const createSound = (name: string, file: File | undefined) => {
     dispatch(SoundActions.create.request({
-      url: urlParams,
+      urlParams,
       soundName: name,
       soundFile: file as File,
     }));
@@ -70,30 +70,11 @@ const MixPage = () => {
 
   useEffect(() => {
     dispatch(SoundActions.list.request({ urlParams }));
-    dispatch(MixActions.getById.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-      sceneId: urlParams.sceneId,
-      mixId: urlParams.mixId,
-    }));
-    dispatch(SceneActions.getById.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-      sceneId: urlParams.sceneId,
-    }));
-    dispatch(SessionActions.getById.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-    }));
-    dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
-  }, [
-    dispatch,
-    urlParams,
-    urlParams.campaignId,
-    urlParams.mixId,
-    urlParams.sceneId,
-    urlParams.sessionId,
-  ]);
+    dispatch(MixActions.getById.request({ urlParams }));
+    dispatch(SceneActions.getById.request({ urlParams }));
+    dispatch(SessionActions.getById.request({ urlParams }));
+    dispatch(CampaignActions.getById.request({ urlParams }));
+  }, [dispatch, urlParams]);
 
   return (
     <>

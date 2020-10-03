@@ -5,7 +5,7 @@ import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
 import { SessionService } from 'services/api/session/session';
-import { Campaign } from 'store/ducks/campaigns/types';
+import { UrlParams } from 'interfaces/urlParams';
 import { SessionActions } from '../actions';
 import { SessionsRequestTypes, Session, ListSessionsState } from '../types';
 import {
@@ -14,9 +14,9 @@ import {
   GetByIdSessionRequestAction,
 } from './types';
 
-export function* listSessions(campaignId: Campaign['id']) {
+export function* listSessions(urlParams: UrlParams) {
   try {
-    const sessions = yield* call(SessionService.list, campaignId);
+    const sessions = yield* call(SessionService.list, urlParams);
 
     yield put(SessionActions.list.success({
       sessionList: sessions as ListSessionsState['data'],
@@ -27,12 +27,12 @@ export function* listSessions(campaignId: Campaign['id']) {
 }
 
 export function* createSession(
-  campaignId: Campaign['id'],
+  urlParams: UrlParams,
   sessionName: Session['name'],
 ) {
   try {
-    yield call(SessionService.create, campaignId, sessionName);
-    yield call(listSessions, campaignId);
+    yield call(SessionService.create, urlParams, sessionName);
+    yield call(listSessions, urlParams);
 
     yield put(SessionActions.create.success());
   } catch (err) {
@@ -41,11 +41,10 @@ export function* createSession(
 }
 
 export function* getByIdSession(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
+  urlParams: UrlParams,
 ) {
   try {
-    const session = yield* call(SessionService.getById, campaignId, sessionId);
+    const session = yield* call(SessionService.getById, urlParams);
 
     yield put(SessionActions.list.append({ session: session as Session }));
     yield put(SessionActions.getById.success());
@@ -65,7 +64,7 @@ export function* watchListSessions() {
       SessionsRequestTypes.LIST_REQUEST,
     );
     if (isEmpty(sessions)) {
-      yield fork(listSessions, payload.campaignId);
+      yield fork(listSessions, payload.urlParams);
     }
   }
 }
@@ -75,7 +74,7 @@ export function* watchCreateSession() {
     const { payload } = yield* take<CreateSessionRequestAction>(
       SessionsRequestTypes.CREATE_REQUEST,
     );
-    yield fork(createSession, payload.campaignId, payload.sessionName);
+    yield fork(createSession, payload.urlParams, payload.sessionName);
   }
 }
 
@@ -85,7 +84,7 @@ export function* watchGetByIdSession() {
       SessionsRequestTypes.GET_BY_ID_REQUEST,
     );
 
-    yield fork(getByIdSession, payload.campaignId, payload.sessionId);
+    yield fork(getByIdSession, payload.urlParams);
   }
 }
 
