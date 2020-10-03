@@ -16,12 +16,15 @@ export const list = createReducer<ListSoundsState, Action>(INITIAL_STATE)
     error: false,
   }))
   .handleAction(SoundActions.list.success, (store, action) => ({
-    data: action.payload.soundList,
+    data: {
+      ...store.data,
+      ...action.payload.soundList,
+    },
     loading: false,
     error: false,
   }))
-  .handleAction(SoundActions.list.failure, () => ({
-    data: {},
+  .handleAction(SoundActions.list.failure, (store) => ({
+    ...store,
     loading: false,
     error: true,
   }));

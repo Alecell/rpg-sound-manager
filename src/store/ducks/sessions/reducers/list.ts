@@ -16,12 +16,15 @@ export const list = createReducer<ListSessionsState, Action>(INITIAL_STATE)
     error: false,
   }))
   .handleAction(SessionActions.list.success, (store, action) => ({
-    data: action.payload.sessionList,
+    data: {
+      ...store.data,
+      ...action.payload.sessionList,
+    },
     loading: false,
     error: false,
   }))
-  .handleAction(SessionActions.list.failure, () => ({
-    data: {},
+  .handleAction(SessionActions.list.failure, (store) => ({
+    ...store,
     loading: false,
     error: true,
   }))
