@@ -1,13 +1,16 @@
 import React from 'react';
 import { Route, Switch, RouteProps } from 'react-router-dom';
 
-import { RootPage } from 'pages';
+import {
+  ManagerSwitcher,
+} from 'pages';
+import { routes } from 'constants/routes';
 
 const rootRoutes: RouteProps[] = [
   {
-    path: '/',
-    exact: true,
-    component: RootPage,
+    path: routes.root().path,
+    exact: false,
+    component: ManagerSwitcher,
   },
 ];
 

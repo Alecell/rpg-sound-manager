@@ -1,5 +1,5 @@
-import { RootPage } from './Root';
+import ManagerSwitcher from './Manager';
 
 export {
-  RootPage,
+  ManagerSwitcher,
 };

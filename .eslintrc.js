@@ -20,12 +20,14 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['react', 'import', 'jsx-a11y', 'es'],
+  plugins: ['react', 'import', 'jsx-a11y'],
   rules: {
     semi: 'off',
     'no-console': 'off',
+    'prefer-destructuring': 'off',
     'multiline-ternary': ['error', 'never'],
 
+    'react/destructuring-assignment': 'off',
     'react/jsx-filename-extension': ['error',
       { extensions: ['.tsx'] },
     ],
@@ -38,8 +40,6 @@ module.exports = {
       ts: 'never',
       tsx: 'never',
     }],
-
-    'es/no-destructuring': 'error',
 
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -62,6 +62,10 @@ module.exports = {
     },
     'import/resolver': {
       typescript: {},
+      node: {
+        extensions: ['.ts', '.tsx'],
+        moduleDirectory: ['src'],
+      }
     },
   },
 };
