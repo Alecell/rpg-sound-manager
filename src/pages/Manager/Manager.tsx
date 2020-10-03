@@ -41,7 +41,9 @@ const managerRoutes = [
   },
 ];
 
-const audio = new SoundService('https://firebasestorage.googleapis.com/v0/b/dungeon-chest-eca8d.appspot.com/o/6lsQAYz8YQd9HHRLfHMP%2FWaterfall%20Sound%20Effect%20(online-audio-converter.com).mp3?alt=media&token=f0b94f61-f3bb-446d-ae8a-73a28a60d5ae', { end: 0, start: 0, volume: 0.5 });
+const audio = new SoundService('https://firebasestorage.googleapis.com/v0/b/dungeon-chest-eca8d.appspot.com/o/6lsQAYz8YQd9HHRLfHMP%2FWaterfall%20Sound%20Effect%20(online-audio-converter.com).mp3?alt=media&token=f0b94f61-f3bb-446d-ae8a-73a28a60d5ae', {
+  end: 0, start: 0, volume: 0.5, muted: false,
+});
 const Test = () => {
   const [volume, setVolume] = useState(0);
   const [time, setTime] = useState(0);
@@ -93,7 +95,7 @@ const Test = () => {
         max="100"
         value={volume}
         onChange={(e) => {
-          audio.volume = parseInt(e.currentTarget.value, 10) / 100;
+          audio.volume = parseInt(e.currentTarget.value, 10);
         }}
       />
       <input
@@ -125,7 +127,7 @@ const ManagerSwitcher = () => (
           />
         ))}
       </Switch>
-      <Test />
+      {/* <Test /> */}
     </main>
   </div>
 );

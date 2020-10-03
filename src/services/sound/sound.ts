@@ -4,7 +4,6 @@ import { ValueUpdate } from './types';
 
 const AUDIO_START = 0;
 
-const MIN_VOLUME = 0;
 const MAX_VOLUME = 100;
 
 const MIN_NATIVE_AUDIO_VOLUME = 0;
@@ -34,8 +33,13 @@ export class SoundService extends Audio {
   }
 
   mute() {
-    this.opts.volume = MIN_VOLUME;
-    this.volume = MIN_VOLUME;
+    this.muted = true;
+    this.opts.muted = true;
+  }
+
+  unmute() {
+    this.muted = false;
+    this.opts.muted = false;
   }
 
   stop() {
@@ -45,7 +49,7 @@ export class SoundService extends Audio {
 
   onVolumeChange(changeFn: ValueUpdate): void {
     this.addEventListener('volumechange', (e: any) => {
-      const volume = Math.round(e.currentTarget.volume * MAX_VOLUME);
+      const volume = Math.round(e.currentTarget.volume);
       changeFn(volume, e);
     });
   }
@@ -73,12 +77,8 @@ export class SoundService extends Audio {
     this.opts.end = time;
   }
 
-  setVolume(value: number | string) {
-    let vol: number = value as number;
-
-    if (isString(value)) {
-      vol = parseInt(value, 10);
-    }
+  set volume(value: number) {
+    let vol = value;
 
     vol /= MAX_VOLUME;
 
@@ -89,10 +89,10 @@ export class SoundService extends Audio {
     }
 
     this.opts.volume = vol;
-    this.volume = vol;
+    super.volume = vol;
   }
 
-  getVolume(): number {
-    return this.volume * MAX_VOLUME;
+  get volume(): number {
+    return super.volume * MAX_VOLUME;
   }
 }

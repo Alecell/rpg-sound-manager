@@ -10,6 +10,7 @@ export interface SoundOptions {
   start: number;
   end: number;
   volume: number;
+  muted: boolean;
 }
 
 export enum SoundRequestTypes {
