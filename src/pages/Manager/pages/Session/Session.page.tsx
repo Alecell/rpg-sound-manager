@@ -40,8 +40,7 @@ const SessionPage = () => {
 
   const createScene = (name: string) => {
     dispatch(SceneActions.create.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
+      urlParams,
       sceneName: name,
     }));
   };
@@ -67,16 +66,10 @@ const SessionPage = () => {
   );
 
   useEffect(() => {
-    dispatch(SceneActions.list.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-    }));
-    dispatch(SessionActions.getById.request({
-      campaignId: urlParams.campaignId,
-      sessionId: urlParams.sessionId,
-    }));
-    dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
-  }, [dispatch, urlParams.campaignId, urlParams.sessionId]);
+    dispatch(SceneActions.list.request({ urlParams }));
+    dispatch(SessionActions.getById.request({ urlParams }));
+    dispatch(CampaignActions.getById.request({ urlParams }));
+  }, [dispatch, urlParams, urlParams.campaignId, urlParams.sessionId]);
 
   return (
     <>

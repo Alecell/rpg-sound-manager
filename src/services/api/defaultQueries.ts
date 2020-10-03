@@ -3,7 +3,7 @@ import { UrlParams } from 'interfaces/urlParams';
 import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 
-export const userRequest = (urlParams: UrlParams) => firestore
+export const userRequest = () => firestore
   .collection(EFirestoreCollections.USERS)
   .doc(CookieService.getUserToken());
 

@@ -34,7 +34,7 @@ const CampaignPage = () => {
 
   const createSession = (name: string) => {
     dispatch(SessionActions.create.request({
-      campaignId: urlParams.campaignId,
+      urlParams,
       sessionName: name,
     }));
   };
@@ -62,9 +62,9 @@ const CampaignPage = () => {
   );
 
   useEffect(() => {
-    dispatch(SessionActions.list.request({ campaignId: urlParams.campaignId }));
-    dispatch(CampaignActions.getById.request({ campaignId: urlParams.campaignId }));
-  }, [dispatch, urlParams.campaignId]);
+    dispatch(SessionActions.list.request({ urlParams }));
+    dispatch(CampaignActions.getById.request({ urlParams }));
+  }, [dispatch, urlParams, urlParams.campaignId]);
 
   return (
     <>

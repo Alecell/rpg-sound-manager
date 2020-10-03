@@ -4,21 +4,17 @@ import {
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
-import { Scene } from 'store/ducks/scenes/types';
-import { Session } from 'store/ducks/sessions/types';
-import { Campaign } from 'store/ducks/campaigns/types';
+import { UrlParams } from 'interfaces/urlParams';
 import { MixService } from 'services/api/mix';
 import { MixActions } from '../actions';
 import { MixRequestTypes, Mix, ListMixesState } from '../types';
 import { ListMixRequestAction, CreateMixRequestAction, GetByIdMixRequestAction } from './types';
 
 export function* listMixes(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
+  urlParams: UrlParams,
 ) {
   try {
-    const mixes = yield* call(MixService.list, campaignId, sessionId, sceneId);
+    const mixes = yield* call(MixService.list, urlParams);
 
     yield put(MixActions.list.success({
       mixList: mixes as ListMixesState['data'],
@@ -29,14 +25,12 @@ export function* listMixes(
 }
 
 export function* createMix(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
+  urlParams: UrlParams,
   mixName: Mix['name'],
 ) {
   try {
-    yield call(MixService.create, campaignId, sessionId, sceneId, mixName);
-    yield call(listMixes, campaignId, sessionId, sceneId);
+    yield call(MixService.create, urlParams, mixName);
+    yield call(listMixes, urlParams);
 
     yield put(MixActions.create.success());
   } catch (err) {
@@ -45,13 +39,10 @@ export function* createMix(
 }
 
 export function* getByIdMix(
-  campaignId: Campaign['id'],
-  sessionId: Session['id'],
-  sceneId: Scene['id'],
-  mixId: Mix['id'],
+  urlParams: UrlParams,
 ) {
   try {
-    const mix = yield* call(MixService.getById, campaignId, sessionId, sceneId, mixId);
+    const mix = yield* call(MixService.getById, urlParams);
 
     yield put(MixActions.list.append({ mix: mix as Mix }));
     yield put(MixActions.getById.success());
@@ -72,7 +63,7 @@ export function* watchListMixes() {
     );
     // TODO: essa verificação tem que ser mais precisa, baseada no ID e na URL
     if (isEmpty(mixes)) {
-      yield fork(listMixes, payload.campaignId, payload.sessionId, payload.sceneId);
+      yield fork(listMixes, payload.urlParams);
     }
   }
 }
@@ -84,9 +75,7 @@ export function* watchCreateMix() {
     );
     yield fork(
       createMix,
-      payload.campaignId,
-      payload.sessionId,
-      payload.sceneId,
+      payload.urlParams,
       payload.mixName,
     );
   }
@@ -100,10 +89,7 @@ export function* watchGetByIdMix() {
 
     yield fork(
       getByIdMix,
-      payload.campaignId,
-      payload.sessionId,
-      payload.sceneId,
-      payload.mixId,
+      payload.urlParams,
     );
   }
 }

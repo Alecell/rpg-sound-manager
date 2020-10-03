@@ -1,23 +1,14 @@
-import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
-import { CookieService } from 'services/cookie/cookie';
-import { Campaign } from 'store/ducks/campaigns/types';
+import { UrlParams } from 'interfaces/urlParams';
 import { ListScenesState, Scene } from 'store/ducks/scenes/types';
-import { Session } from 'store/ducks/sessions/types';
+import { sceneRequest, sessionRequest } from '../defaultQueries';
 
 export class SceneService {
   static create(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
+    urlParams: UrlParams,
     sceneName: Scene['name'],
   ): void {
-    firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
+    sessionRequest(urlParams)
       .collection(EFirestoreCollections.SCENES)
       .doc()
       .set({
@@ -29,16 +20,9 @@ export class SceneService {
   }
 
   static list(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
+    urlParams: UrlParams,
   ): Promise<ListScenesState['data'] | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
+    return sessionRequest(urlParams)
       .collection(EFirestoreCollections.SCENES)
       .get()
       .then((res) => res.docs.reduce((scene, obj) => {
@@ -57,25 +41,15 @@ export class SceneService {
   }
 
   static getById(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-    sceneId: Scene['id'],
-  ) {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
-      .collection(EFirestoreCollections.SCENES)
-      .doc(sceneId)
+    urlParams: UrlParams,
+  ): Promise<Scene | void> {
+    return sceneRequest(urlParams)
       .get()
       .then((res) => {
         const data = res.data() || {};
 
         return {
-          id: sceneId,
+          id: urlParams.sceneId,
           name: data.name,
         };
       })

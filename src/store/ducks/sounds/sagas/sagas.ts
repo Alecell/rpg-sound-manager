@@ -69,7 +69,7 @@ export function* watchCreateSound() {
     );
     yield fork(
       createSound,
-      payload.url,
+      payload.urlParams,
       payload.soundName,
       payload.soundFile,
     );

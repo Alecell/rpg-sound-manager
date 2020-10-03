@@ -1,19 +1,14 @@
-import { firestore } from 'config/firebase';
-import { Campaign } from 'store/ducks/campaigns/types';
 import { ListSessionsState, Session } from 'store/ducks/sessions/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
-import { CookieService } from '../../cookie';
+import { UrlParams } from 'interfaces/urlParams';
+import { campaignRequest, sessionRequest } from '../defaultQueries';
 
 export class SessionService {
   static create(
-    campaignId: Campaign['id'],
+    urlParams: UrlParams,
     sessionName: Session['name'],
   ): void {
-    firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
+    campaignRequest(urlParams)
       .collection(EFirestoreCollections.SESSIONS)
       .doc()
       .set({
@@ -25,13 +20,9 @@ export class SessionService {
   }
 
   static list(
-    campaignId: Campaign['id'],
+    urlParams: UrlParams,
   ): Promise<ListSessionsState['data'] | void> {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
+    return campaignRequest(urlParams)
       .collection(EFirestoreCollections.SESSIONS)
       .get()
       .then((res) => res.docs.reduce((session, obj) => {
@@ -46,27 +37,19 @@ export class SessionService {
       }, {} as ListSessionsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
-        return {};
       });
   }
 
   static getById(
-    campaignId: Campaign['id'],
-    sessionId: Session['id'],
-  ) {
-    return firestore
-      .collection(EFirestoreCollections.USERS)
-      .doc(CookieService.getUserToken())
-      .collection(EFirestoreCollections.CAMPAIGNS)
-      .doc(campaignId)
-      .collection(EFirestoreCollections.SESSIONS)
-      .doc(sessionId)
+    urlParams: UrlParams,
+  ): Promise<Session | void> {
+    return sessionRequest(urlParams)
       .get()
       .then((res) => {
         const data = res.data() || {};
 
         return {
-          id: sessionId,
+          id: urlParams.sessionId,
           name: data.name,
         };
       })
