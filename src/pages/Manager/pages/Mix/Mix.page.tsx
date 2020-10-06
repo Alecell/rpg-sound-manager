@@ -78,6 +78,7 @@ const MixPage = () => {
 
   return (
     <>
+      <h1>MIX</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

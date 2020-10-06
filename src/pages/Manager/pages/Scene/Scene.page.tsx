@@ -11,6 +11,7 @@ import { SessionActions } from 'store/ducks/sessions/actions';
 import { MixActions } from 'store/ducks/mixes/actions/actions';
 import { CampaignActions } from 'store/ducks/campaigns/actions';
 
+import Player from 'components/Player';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
@@ -64,15 +65,15 @@ const ScenePage = () => {
       {Object
         .keys(store.sounds.list.data)
         .map((key) => {
-          const id = store.sounds.list.data[key].id;
+          const { id, file, name } = store.sounds.list.data[key];
 
           return (
-            <button
+            <Player
               key={id}
-              type="button"
-            >
-              { store.sounds.list.data[key].name }
-            </button>
+              id={id}
+              file={file}
+              name={name}
+            />
           );
         })}
     </div>
@@ -108,6 +109,7 @@ const ScenePage = () => {
 
   return (
     <>
+      <h1>CENAS</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true, 'sound')}
@@ -120,9 +122,14 @@ const ScenePage = () => {
       >
         NOVO MIX
       </button>
-
-      { renderButtonsMix() }
-      { renderButtonsSound() }
+      <div>
+        MIXES
+        { renderButtonsMix() }
+      </div>
+      <div>
+        SONS
+        { renderButtonsSound() }
+      </div>
 
       <DialogCreate
         withInput

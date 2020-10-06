@@ -2,6 +2,6 @@
 /**
  * This is a work around to type an empty object
  */
-export type EmptyObject = {
+export type TEmptyObject = {
   [K in any] : never
 };
