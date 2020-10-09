@@ -73,7 +73,7 @@ const SessionPage = () => {
 
   return (
     <>
-      <h1>SESSOES</h1>
+      <h1>SCENES</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

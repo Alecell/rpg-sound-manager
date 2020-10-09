@@ -63,7 +63,7 @@ const RootPage = () => {
 
   return (
     <>
-      <h1>PÀGINA INICIAL</h1>
+      <h1>CAMPANHAS</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

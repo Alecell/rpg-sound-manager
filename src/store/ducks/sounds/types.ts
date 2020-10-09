@@ -1,16 +1,18 @@
 import { RequestState } from '../types';
 
-export interface Sound {
-  id: string;
-  name: string;
-  file: string;
-}
-
-export interface SoundOptions {
+export interface SoundConfig {
   start: number;
   end: number;
   volume: number;
-  muted: boolean;
+  mute: boolean;
+  loop: boolean;
+}
+
+export interface Sound {
+  id: string;
+  name: string;
+  url: string;
+  config: SoundConfig;
 }
 
 export enum SoundRequestTypes {
@@ -22,10 +24,11 @@ export enum SoundRequestTypes {
   CREATE_SUCCESS = '@sound/CREATE_SUCCESS',
   CREATE_FAILURE = '@sound/CREATE_FAILURE',
 
-  GET_BY_ID_REQUEST = '@sound/GET_BY_ID_REQUEST',
-  GET_BY_ID_SUCCESS = '@sound/GET_BY_ID_SUCCESS',
-  GET_BY_ID_FAILURE = '@sound/GET_BY_ID_FAILURE',
+  SET_CONFIG_REQUEST = '@sound/SET_CONFIG_REQUEST',
+  SET_CONFIG_SUCCESS = '@sound/SET_CONFIG_SUCCESS',
+  SET_CONFIG_FAILURE = '@sound/SET_CONFIG_FAILURE',
 }
 
 export type ListSoundsState = RequestState<Sound>;
 export type CreateSoundState = RequestState;
+export type SetConfigSoundState = RequestState;

@@ -1,4 +1,4 @@
-import { Sound, SoundOptions } from 'store/ducks/sounds/types';
+import { Sound, SoundConfig } from 'store/ducks/sounds/types';
 import { isString } from 'utils/isString';
 import { ValueUpdate } from './types';
 
@@ -10,36 +10,48 @@ const MIN_NATIVE_AUDIO_VOLUME = 0;
 const MAX_NATIVE_AUDIO_VOLUME = 1;
 
 export class SoundService extends Audio {
-  opts: SoundOptions;
+  config: SoundConfig;
 
-  constructor(soundUrl: Sound['file'], opts: SoundOptions) {
+  constructor(soundUrl: Sound['url'], config: SoundConfig) {
     super(soundUrl);
 
-    this.opts = opts;
+    this.config = { ...config };
 
     this.addEventListener('timeupdate', this.handleAudioEnd);
   }
 
+  static async getAudioFileDuration(file: File): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const objectUrl = URL.createObjectURL(file);
+      const audio = new Audio(objectUrl);
+
+      audio.onloadedmetadata = (e: any) => {
+        resolve(audio.duration);
+      };
+    });
+  }
+
   private handleAudioEnd(e: any) {
-    if (e.currentTarget.currentTime > this.opts.end && this.loop) {
+    if (e.currentTarget.currentTime > this.config.end && this.loop) {
       this.currentTime = this.setTimeToStart();
-    } else if (e.currentTarget.currentTime > this.opts.end && !this.loop) {
+    } else if (e.currentTarget.currentTime > this.config.end && !this.loop) {
       this.stop();
+      if (this.onended) this.onended(e);
     }
   }
 
   private setTimeToStart() {
-    return this.opts.start || AUDIO_START;
+    return this.config.start || AUDIO_START;
   }
 
   mute() {
     this.muted = true;
-    this.opts.muted = true;
+    this.config.mute = true;
   }
 
   unmute() {
     this.muted = false;
-    this.opts.muted = false;
+    this.config.mute = false;
   }
 
   stop() {
@@ -54,7 +66,7 @@ export class SoundService extends Audio {
     });
   }
 
-  onTimeUpdate(onUpdate: ValueUpdate): void {
+  set onTimeUpdate(onUpdate: ValueUpdate) {
     this.addEventListener('timeupdate', (e: any) => {
       onUpdate(e.currentTarget.currentTime, e);
     });
@@ -66,7 +78,7 @@ export class SoundService extends Audio {
     if (isString(time)) time = parseInt(time, 10);
 
     this.currentTime = time;
-    this.opts.start = time;
+    this.config.start = time;
   }
 
   set end(value: number | string) {
@@ -74,7 +86,7 @@ export class SoundService extends Audio {
 
     if (isString(time)) time = parseInt(time, 10);
 
-    this.opts.end = time;
+    this.config.end = time;
   }
 
   set volume(value: number) {
@@ -88,7 +100,7 @@ export class SoundService extends Audio {
       vol = MIN_NATIVE_AUDIO_VOLUME;
     }
 
-    this.opts.volume = vol;
+    this.config.volume = vol;
     super.volume = vol;
   }
 

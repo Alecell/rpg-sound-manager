@@ -5,7 +5,7 @@ import {
   SoundListRequestAction,
   SoundListSuccessAction,
   SoundCreateRequestAction,
-  SoundGetByIdRequestAction,
+  SoundSetConfigRequestAction,
 } from './types';
 
 export class SoundActions {
@@ -21,9 +21,9 @@ export class SoundActions {
     SoundRequestTypes.CREATE_FAILURE,
   )();
 
-  static readonly getById = createAsyncAction(
-    [SoundRequestTypes.GET_BY_ID_REQUEST, (res: SoundGetByIdRequestAction) => res],
-    SoundRequestTypes.GET_BY_ID_SUCCESS,
-    SoundRequestTypes.GET_BY_ID_FAILURE,
+  static readonly setConfig = createAsyncAction(
+    [SoundRequestTypes.SET_CONFIG_REQUEST, (res: SoundSetConfigRequestAction) => res],
+    SoundRequestTypes.SET_CONFIG_SUCCESS,
+    SoundRequestTypes.SET_CONFIG_FAILURE,
   )();
 }

@@ -9,7 +9,6 @@ export interface UrlParams {
   sessionId: Session['id'];
   sceneId: Scene['id'];
   mixId: Mix['id'];
-  soundId: Sound['id'];
 }
 
 export interface UrlParamsAsObj {

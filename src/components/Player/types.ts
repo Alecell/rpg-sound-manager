@@ -1,5 +1,8 @@
+import { SoundConfig } from 'store/ducks/sounds/types';
+
 export interface IPlayerProps {
   id: string;
-  file: string;
+  url: string;
   name: string;
+  config: SoundConfig;
 }

@@ -65,14 +65,20 @@ const ScenePage = () => {
       {Object
         .keys(store.sounds.list.data)
         .map((key) => {
-          const { id, file, name } = store.sounds.list.data[key];
+          const {
+            id,
+            url,
+            name,
+            config,
+          } = store.sounds.list.data[key];
 
           return (
             <Player
               key={id}
               id={id}
-              file={file}
+              url={url}
               name={name}
+              config={config}
             />
           );
         })}
@@ -109,7 +115,7 @@ const ScenePage = () => {
 
   return (
     <>
-      <h1>CENAS</h1>
+      <h1>SONS E MIXES</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true, 'sound')}
