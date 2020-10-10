@@ -42,17 +42,3 @@ export const mixRequest = (urlParams: UrlParams) => firestore
   .doc(urlParams.sceneId)
   .collection(EFirestoreCollections.MIXES)
   .doc(urlParams.mixId);
-
-export const soundRequest = (urlParams: UrlParams) => firestore
-  .collection(EFirestoreCollections.USERS)
-  .doc(CookieService.getUserToken())
-  .collection(EFirestoreCollections.CAMPAIGNS)
-  .doc(urlParams.campaignId)
-  .collection(EFirestoreCollections.SESSIONS)
-  .doc(urlParams.sessionId)
-  .collection(EFirestoreCollections.SCENES)
-  .doc(urlParams.sceneId)
-  .collection(EFirestoreCollections.MIXES)
-  .doc(urlParams.mixId)
-  .collection(EFirestoreCollections.SOUNDS)
-  .doc(urlParams.soundId);

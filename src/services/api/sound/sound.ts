@@ -1,10 +1,10 @@
 import { storage } from 'config/firebase';
 import { CookieService } from 'services/cookie';
-import { ListSoundsState } from 'store/ducks/sounds/types';
+import { ListSoundsState, Sound, SoundConfig } from 'store/ducks/sounds/types';
 import { ListScenesState, Scene } from 'store/ducks/scenes/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
-import { sceneRequest, mixRequest, soundRequest } from '../defaultQueries';
+import { sceneRequest, mixRequest } from '../defaultQueries';
 
 export class SoundService {
   static upload(hash: string, file: File): Promise<URL | void> {
@@ -27,6 +27,7 @@ export class SoundService {
     urlParams: UrlParams,
     soundName: Scene['name'],
     fileUrl: string,
+    duration: SoundConfig['end'],
   ): void {
     let request = sceneRequest(urlParams);
 
@@ -38,6 +39,11 @@ export class SoundService {
       .set({
         name: soundName,
         url: fileUrl,
+        start: 0,
+        end: duration,
+        volume: 1,
+        mute: false,
+        loop: false,
       })
       .catch((error) => {
         console.error('Error writing document: ', error);
@@ -46,31 +52,52 @@ export class SoundService {
 
   static updateConfig = (
     urlParams: UrlParams,
-    config: any,
+    soundId: Sound['id'],
+    config: SoundConfig,
   ): void => {
-    soundRequest(urlParams)
+    let request = sceneRequest;
+
+    if (urlParams.mixId) request = mixRequest;
+
+    console.log(config);
+
+    request(urlParams)
+      .collection(EFirestoreCollections.SOUNDS)
+      .doc(soundId)
       .set({
+        start: config.start,
+        end: config.end,
+        volume: config.volume,
+        mute: config.mute,
         loop: config.loop,
-        startAt: config.limits.start,
-        endAt: config.limits.end,
       }, { merge: true });
   };
 
   static list(urlParams: UrlParams): Promise<ListScenesState['data'] | void> {
-    let request = sceneRequest(urlParams);
+    let request = sceneRequest;
 
-    if (urlParams.mixId) request = mixRequest(urlParams);
+    if (urlParams.mixId) request = mixRequest;
 
-    return request
+    return request(urlParams)
       .collection(EFirestoreCollections.SOUNDS)
       .get()
       .then((res) => res.docs.reduce((sound, obj) => {
+        const {
+          name, url, start, end, mute, volume, loop,
+        } = obj.data();
         const temp = sound;
 
         temp[obj.id] = {
           id: obj.id,
-          name: obj.data().name,
-          file: obj.data().url,
+          name,
+          url,
+          config: {
+            start,
+            end,
+            mute,
+            volume,
+            loop,
+          },
         };
 
         return temp;

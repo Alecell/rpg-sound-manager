@@ -1,8 +1,7 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Sound, ListSoundsState } from '../types';
+import { Sound, ListSoundsState, SoundConfig } from '../types';
 
 export type SoundListRequestAction = UrlParamsAsObj;
-export type SoundGetByIdRequestAction = UrlParamsAsObj;
 
 export interface SoundListSuccessAction {
   soundList: ListSoundsState['data'];
@@ -11,4 +10,9 @@ export interface SoundListSuccessAction {
 export interface SoundCreateRequestAction extends UrlParamsAsObj {
   soundName: Sound['name'];
   soundFile: File;
+}
+
+export interface SoundSetConfigRequestAction extends UrlParamsAsObj {
+  soundId: Sound['id'];
+  config: SoundConfig;
 }

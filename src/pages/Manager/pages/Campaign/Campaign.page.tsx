@@ -68,6 +68,7 @@ const CampaignPage = () => {
 
   return (
     <>
+      <h1>SESSOES</h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

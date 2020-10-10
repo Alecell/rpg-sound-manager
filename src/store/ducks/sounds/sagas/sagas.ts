@@ -1,19 +1,28 @@
 import {
-  call, put, take, fork, select, all,
+  call, put, take, fork, select, all, takeLatest,
 } from 'typed-redux-saga';
 import { v4 as uuid } from 'uuid';
 import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
-import { SoundService } from 'services/api/sound';
 import { UrlParams } from 'interfaces/urlParams';
+import { SoundService } from 'services/sound';
+import { SoundService as SoundServiceApi } from 'services/api/sound';
 import { SoundActions } from '../actions';
-import { SoundRequestTypes, Sound, ListSoundsState } from '../types';
-import { ListSoundRequestAction, CreateSoundRequestAction } from './types';
+import {
+  SoundRequestTypes,
+  Sound,
+  ListSoundsState,
+} from '../types';
+import {
+  ListSoundRequestAction,
+  CreateSoundRequestAction,
+  SetConfigSoundRequestAction,
+} from './types';
 
 export function* listSounds(urlParams: UrlParams) {
   try {
-    const sounds = yield* call(SoundService.list, urlParams);
+    const sounds = yield* call(SoundServiceApi.list, urlParams);
 
     yield put(SoundActions.list.success({
       soundList: sounds as ListSoundsState['data'],
@@ -24,22 +33,33 @@ export function* listSounds(urlParams: UrlParams) {
 }
 
 export function* createSound(
-  url: UrlParams,
+  urlParams: UrlParams,
   soundName: Sound['name'],
   soundFile: File,
 ) {
   try {
-    const soundUrl = yield* call(SoundService.upload, uuid(), soundFile);
+    const soundUrl = yield* call(SoundServiceApi.upload, uuid(), soundFile);
 
     if (soundUrl) {
-      yield call(SoundService.create, url, soundName, `${soundUrl.href}`);
+      const duration = yield* call(SoundService.getAudioFileDuration, soundFile);
+      yield call(SoundServiceApi.create, urlParams, soundName, `${soundUrl.href}`, duration);
     } else {
       throw new Error('Falha no upload');
     }
-    yield call(listSounds, url);
+    yield call(listSounds, urlParams);
     yield put(SoundActions.create.success());
   } catch (err) {
     yield put(SoundActions.create.failure());
+  }
+}
+
+export function* setConfig({ payload }: SetConfigSoundRequestAction) {
+  try {
+    yield* call(SoundServiceApi.updateConfig, payload.urlParams, payload.soundId, payload.config);
+
+    yield put(SoundActions.setConfig.success());
+  } catch (err) {
+    yield put(SoundActions.setConfig.failure());
   }
 }
 
@@ -76,9 +96,16 @@ export function* watchCreateSound() {
   }
 }
 
+export function* watchSetConfig() {
+  while (true) {
+    yield takeLatest(SoundActions.setConfig.request, setConfig);
+  }
+}
+
 export function* soundWatcher() {
   return yield all([
     fork(watchListSound),
     fork(watchCreateSound),
+    fork(watchSetConfig),
   ]);
 }
