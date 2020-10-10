@@ -49,7 +49,7 @@ function Player(props: IPlayerProps) {
   };
 
   const toggleLoop = () => {
-    if (!looping) {
+    if (!sound.loop) {
       sound.loop = true;
     } else {
       sound.loop = false;
@@ -109,7 +109,7 @@ function Player(props: IPlayerProps) {
       setPlaying(false);
     };
 
-    sound.oncanplaythrough = () => {
+    sound.onloadeddata = () => {
       setLoading(false);
     };
 

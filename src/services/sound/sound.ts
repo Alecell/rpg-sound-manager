@@ -18,6 +18,11 @@ export class SoundService extends Audio {
     this.config = { ...config };
 
     this.addEventListener('timeupdate', this.handleAudioEnd);
+    this.addEventListener('loadeddata', () => {
+      this.setTimeToStart();
+      this.volume = config.volume;
+      this.loop = config.loop;
+    });
   }
 
   static async getAudioFileDuration(file: File): Promise<number> {
@@ -25,7 +30,7 @@ export class SoundService extends Audio {
       const objectUrl = URL.createObjectURL(file);
       const audio = new Audio(objectUrl);
 
-      audio.onloadedmetadata = (e: any) => {
+      audio.onloadeddata = (e: any) => {
         resolve(audio.duration);
       };
     });
@@ -33,7 +38,7 @@ export class SoundService extends Audio {
 
   private handleAudioEnd(e: any) {
     if (e.currentTarget.currentTime > this.config.end && this.loop) {
-      this.currentTime = this.setTimeToStart();
+      this.setTimeToStart();
     } else if (e.currentTarget.currentTime > this.config.end && !this.loop) {
       this.stop();
       if (this.onended) this.onended(e);
@@ -41,7 +46,7 @@ export class SoundService extends Audio {
   }
 
   private setTimeToStart() {
-    return this.config.start || AUDIO_START;
+    this.currentTime = this.config.start || AUDIO_START;
   }
 
   mute() {
@@ -56,7 +61,7 @@ export class SoundService extends Audio {
 
   stop() {
     this.pause();
-    this.currentTime = this.setTimeToStart();
+    this.setTimeToStart();
   }
 
   onVolumeChange(changeFn: ValueUpdate): void {
