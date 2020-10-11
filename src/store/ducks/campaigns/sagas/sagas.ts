@@ -21,10 +21,10 @@ import {
 
 export function* listCampaigns() {
   try {
-    const data = yield* call(CampaignService.list);
+    const campaigns = yield* call(CampaignService.list);
 
     yield put(CampaignActions.list.success({
-      campaignList: data as ListCampaignsState['data'],
+      campaignList: campaigns as ListCampaignsState['data'],
     }));
   } catch (err) {
     yield put(CampaignActions.list.failure());
