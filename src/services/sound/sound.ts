@@ -18,6 +18,7 @@ export class SoundService extends Audio {
     this.config = { ...config };
 
     this.addEventListener('timeupdate', this.handleAudioEnd);
+    this.addEventListener('ended', this.handleAudioEnd);
     this.addEventListener('loadeddata', () => {
       this.setTimeToStart();
       this.volume = config.volume;
@@ -37,9 +38,13 @@ export class SoundService extends Audio {
   }
 
   private handleAudioEnd(e: any) {
-    if (e.currentTarget.currentTime > this.config.end && this.loop) {
+    if (
+      (e.currentTarget.currentTime >= this.config.end
+        || e.currentTarget.currentTime < this.config.start
+      ) && this.loop
+    ) {
       this.setTimeToStart();
-    } else if (e.currentTarget.currentTime > this.config.end && !this.loop) {
+    } else if (e.currentTarget.currentTime >= this.config.end && !this.loop) {
       this.stop();
       if (this.onended) this.onended(e);
     }

@@ -59,8 +59,6 @@ export class SoundService {
 
     if (urlParams.mixId) request = mixRequest;
 
-    console.log(config);
-
     request(urlParams)
       .collection(EFirestoreCollections.SOUNDS)
       .doc(soundId)
