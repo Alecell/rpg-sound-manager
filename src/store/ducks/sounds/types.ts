@@ -1,3 +1,5 @@
+import { Mix } from '../mixes/types';
+import { Scene } from '../scenes/types';
 import { RequestState } from '../types';
 
 export interface SoundConfig {
@@ -29,6 +31,6 @@ export enum SoundRequestTypes {
   SET_CONFIG_FAILURE = '@sound/SET_CONFIG_FAILURE',
 }
 
-export type ListSoundsState = RequestState<Sound>;
+export type ListSoundsState = RequestState<Sound & { collectionId?: Mix['id'] | Scene['id']; }>;
 export type CreateSoundState = RequestState;
 export type SetConfigSoundState = RequestState;

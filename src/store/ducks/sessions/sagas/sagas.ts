@@ -1,11 +1,11 @@
 import {
   call, put, take, fork, select, all,
 } from 'typed-redux-saga';
-import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
 import { SessionService } from 'services/api/session/session';
 import { UrlParams } from 'interfaces/urlParams';
+import { ObjectUtil } from 'utils/object/object';
 import { SessionActions } from '../actions';
 import { SessionsRequestTypes, Session, ListSessionsState } from '../types';
 import {
@@ -13,14 +13,22 @@ import {
   CreateSessionRequestAction,
   GetByIdSessionRequestAction,
 } from './types';
+import { SessionListSuccessAction } from '../actions/types';
 
 export function* listSessions(urlParams: UrlParams) {
   try {
-    const sessions = yield* call(SessionService.list, urlParams);
+    const sessionsState = yield* select((state: RootState) => state.sessions.list.data);
 
-    yield put(SessionActions.list.success({
-      sessionList: sessions as ListSessionsState['data'],
-    }));
+    if (Object.keys(sessionsState).length < 2) {
+      const sessions = (yield* call(SessionService.list, urlParams)) as ListSessionsState['data'];
+      const sessionList = ObjectUtil.appendOnEveryChild<
+        SessionListSuccessAction['sessionList']
+      >(sessions, { campaignId: urlParams.campaignId });
+
+      yield put(SessionActions.list.success({ sessionList }));
+    } else {
+      yield put(SessionActions.list.cancel());
+    }
   } catch (err) {
     yield put(SessionActions.list.failure());
   }
@@ -44,12 +52,23 @@ export function* getByIdSession(
   urlParams: UrlParams,
 ) {
   try {
-    const session = yield* call(SessionService.getById, urlParams);
+    const sessions = yield* select((state: RootState) => state.sessions.list.data);
 
-    yield put(SessionActions.list.append({ session: session as Session }));
-    yield put(SessionActions.getById.success());
+    if (!ObjectUtil.hasKey(sessions, urlParams.sessionId)) {
+      const session = (yield* call(SessionService.getById, urlParams)) as Session;
+
+      yield* put(SessionActions.list.append({
+        session: {
+          ...session,
+          campaignId: urlParams.sessionId,
+        },
+      }));
+      yield* put(SessionActions.getById.success());
+    } else {
+      yield* put(SessionActions.getById.cancel());
+    }
   } catch (err) {
-    yield put(SessionActions.getById.failure());
+    yield* put(SessionActions.getById.failure());
   }
 }
 
@@ -59,13 +78,11 @@ export function* getByIdSession(
 
 export function* watchListSessions() {
   while (true) {
-    const sessions = yield* select((state: RootState) => state.sessions.list.data);
     const { payload } = yield* take<ListSessionRequestAction>(
       SessionsRequestTypes.LIST_REQUEST,
     );
-    if (isEmpty(sessions)) {
-      yield fork(listSessions, payload.urlParams);
-    }
+
+    yield* fork(listSessions, payload.urlParams);
   }
 }
 
@@ -74,7 +91,7 @@ export function* watchCreateSession() {
     const { payload } = yield* take<CreateSessionRequestAction>(
       SessionsRequestTypes.CREATE_REQUEST,
     );
-    yield fork(createSession, payload.urlParams, payload.sessionName);
+    yield* fork(createSession, payload.urlParams, payload.sessionName);
   }
 }
 
@@ -84,7 +101,7 @@ export function* watchGetByIdSession() {
       SessionsRequestTypes.GET_BY_ID_REQUEST,
     );
 
-    yield fork(getByIdSession, payload.urlParams);
+    yield* fork(getByIdSession, payload.urlParams);
   }
 }
 

@@ -15,6 +15,7 @@ import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
+    mixes: state.mixes.list.data,
     sounds: state.sounds,
   }), shallowEqual,
 );
@@ -78,7 +79,11 @@ const MixPage = () => {
 
   return (
     <>
-      <h1>SOUND</h1>
+      <h1>
+        Mix
+        {' '}
+        {store.mixes[urlParams.mixId]?.name}
+      </h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

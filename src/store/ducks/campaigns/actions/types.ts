@@ -1,5 +1,5 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Campaign, ListCampaignsState } from '../types';
+import { Campaign, CampaignCollection, ListCampaignsState } from '../types';
 
 export type CampaignGetByIdRequestAction = UrlParamsAsObj;
 
@@ -8,7 +8,7 @@ export interface CampaignListSuccessAction {
 }
 
 export interface CampaignListAppendAction {
-  campaign: Campaign;
+  campaign: Campaign & CampaignCollection;
 }
 
 export interface CampaignCreateRequestAction {

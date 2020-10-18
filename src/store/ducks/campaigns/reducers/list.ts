@@ -28,6 +28,11 @@ export const list = createReducer<ListCampaignsState, Action>(INITIAL_STATE)
     loading: false,
     error: true,
   }))
+  .handleAction(CampaignActions.list.cancel, (store) => ({
+    ...store,
+    loading: false,
+    error: false,
+  }))
   .handleAction(CampaignActions.list.append, (store, action) => ({
     ...store,
     data: {

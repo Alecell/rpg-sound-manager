@@ -16,6 +16,7 @@ export class MixActions {
       [MixRequestTypes.LIST_REQUEST, (res: MixListRequestAction) => res],
       [MixRequestTypes.LIST_SUCCESS, (res: MixListSuccessAction) => res],
       MixRequestTypes.LIST_FAILURE,
+      MixRequestTypes.LIST_CANCEL,
     )(),
   } as const;
 
@@ -29,5 +30,6 @@ export class MixActions {
     [MixRequestTypes.GET_BY_ID_REQUEST, (res: MixGetByIdRequestAction) => res],
     MixRequestTypes.GET_BY_ID_SUCCESS,
     MixRequestTypes.GET_BY_ID_FAILURE,
+    MixRequestTypes.GET_BY_ID_CANCEL,
   )();
 }

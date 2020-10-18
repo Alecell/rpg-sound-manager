@@ -13,6 +13,7 @@ import DialogCreate from '../../components/dialogs/Create';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
+    sessions: state.sessions.list.data,
     scenes: state.scenes,
   }), shallowEqual,
 );
@@ -73,7 +74,11 @@ const SessionPage = () => {
 
   return (
     <>
-      <h1>SCENES</h1>
+      <h1>
+        Sessão
+        {' '}
+        {store.sessions[urlParams.sessionId]?.name}
+      </h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

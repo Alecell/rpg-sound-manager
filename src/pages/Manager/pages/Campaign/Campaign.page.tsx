@@ -12,7 +12,8 @@ import DialogCreate from '../../components/dialogs/Create';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
-    sessions: state.sessions,
+    campaigns: state.campaigns.list.data,
+    sessions: state.sessions.list.data,
   }), shallowEqual,
 );
 
@@ -43,9 +44,10 @@ const CampaignPage = () => {
     <div>
       {
         Object
-          .keys(store.sessions.list.data)
+          .keys(store.sessions)
+          .filter((key: string) => store.sessions[key].campaignId === urlParams.campaignId)
           .map((key) => {
-            const id = store.sessions.list.data[key].id;
+            const id = store.sessions[key].id;
 
             return (
               <button
@@ -53,7 +55,7 @@ const CampaignPage = () => {
                 type="button"
                 onClick={goToSessionPage(id)}
               >
-                { store.sessions.list.data[key].name }
+                { store.sessions[key].name }
               </button>
             );
           })
@@ -68,7 +70,11 @@ const CampaignPage = () => {
 
   return (
     <>
-      <h1>SESSOES</h1>
+      <h1>
+        Campanha
+        {' '}
+        {store.campaigns[urlParams.campaignId]?.name}
+      </h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true)}

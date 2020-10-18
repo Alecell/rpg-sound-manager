@@ -16,6 +16,7 @@ import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
+    scenes: state.scenes.list.data,
     sounds: state.sounds,
     mixes: state.mixes,
   }), shallowEqual,
@@ -115,7 +116,11 @@ const ScenePage = () => {
 
   return (
     <>
-      <h1>SONS E MIXES</h1>
+      <h1>
+        Cena
+        {' '}
+        {store.scenes[urlParams.sceneId]?.name}
+      </h1>
       <button
         type="button"
         onClick={toggleCreateDialog(true, 'sound')}
