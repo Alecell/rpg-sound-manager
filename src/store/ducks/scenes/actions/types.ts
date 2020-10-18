@@ -1,5 +1,5 @@
-import { UrlParams, UrlParamsAsObj } from 'interfaces/urlParams';
-import { Scene, ListScenesState } from '../types';
+import { UrlParamsAsObj } from 'interfaces/urlParams';
+import { Scene, ListScenesState, SceneCollection } from '../types';
 
 export type SceneListRequestAction = UrlParamsAsObj;
 export type SceneGetByIdRequestAction = UrlParamsAsObj;
@@ -9,7 +9,7 @@ export interface SceneListSuccessAction {
 }
 
 export interface SceneListAppendAction {
-  scene: Scene;
+  scene: Scene & SceneCollection;
 }
 
 export interface SceneCreateRequestAction extends UrlParamsAsObj {

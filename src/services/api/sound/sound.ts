@@ -1,14 +1,14 @@
 import { storage } from 'config/firebase';
-import { CookieService } from 'services/cookie';
-import { ListSoundsState, Sound, SoundConfig } from 'store/ducks/sounds/types';
+import { UserService } from 'services/user';
 import { ListScenesState, Scene } from 'store/ducks/scenes/types';
+import { ListSoundsState, Sound, SoundConfig } from 'store/ducks/sounds/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
 import { sceneRequest, mixRequest } from '../defaultQueries';
 
 export class SoundService {
   static upload(hash: string, file: File): Promise<URL | void> {
-    const userId = CookieService.getUserToken();
+    const userId = UserService.getToken();
     const fileExtension = file.name.split('.').pop();
     const savePath = `${userId}/${hash}.${fileExtension}`;
 

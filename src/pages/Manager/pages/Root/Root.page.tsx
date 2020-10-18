@@ -8,11 +8,12 @@ import { Campaign } from 'store/ducks/campaigns/types';
 import { CampaignActions } from 'store/ducks/campaigns/actions';
 import { routes } from 'constants/routes';
 
+import { UserService } from 'services/user/user';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
   (state: RootState) => ({
-    campaigns: state.campaigns,
+    campaigns: state.campaigns.list.data,
   }), shallowEqual,
 );
 
@@ -39,9 +40,10 @@ const RootPage = () => {
     <div>
       {
         Object
-          .keys(store.campaigns.list.data)
+          .keys(store.campaigns)
+          .filter((key: string) => store.campaigns[key].userId === UserService.getToken())
           .map((key) => {
-            const id = store.campaigns.list.data[key].id;
+            const id = store.campaigns[key].id;
 
             return (
               <button
@@ -49,7 +51,7 @@ const RootPage = () => {
                 type="button"
                 onClick={goToCampaignPage(id)}
               >
-                { store.campaigns.list.data[key].name }
+                { store.campaigns[key].name }
               </button>
             );
           })

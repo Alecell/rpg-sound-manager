@@ -1,24 +1,36 @@
 import {
   call, put, take, fork, select, all,
 } from 'typed-redux-saga';
-import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
 import { MixService } from 'services/api/mix';
+import { ObjectUtil } from 'utils/object/object';
 import { MixActions } from '../actions';
+import { MixListSuccessAction } from '../actions/types';
 import { MixRequestTypes, Mix, ListMixesState } from '../types';
-import { ListMixRequestAction, CreateMixRequestAction, GetByIdMixRequestAction } from './types';
+import {
+  ListMixRequestAction,
+  CreateMixRequestAction,
+  GetByIdMixRequestAction,
+} from './types';
 
 export function* listMixes(
   urlParams: UrlParams,
 ) {
   try {
-    const mixes = yield* call(MixService.list, urlParams);
+    const mixesState = yield* select((state: RootState) => state.mixes.list.data);
 
-    yield put(MixActions.list.success({
-      mixList: mixes as ListMixesState['data'],
-    }));
+    if (Object.keys(mixesState).length < 2) {
+      const mixes = (yield* call(MixService.list, urlParams)) as ListMixesState['data'];
+      const mixList = ObjectUtil.appendOnEveryChild<
+        MixListSuccessAction['mixList']
+      >(mixes, { sceneId: urlParams.sceneId });
+
+      yield put(MixActions.list.success({ mixList }));
+    } else {
+      yield put(MixActions.list.cancel());
+    }
   } catch (err) {
     yield put(MixActions.list.failure());
   }
@@ -42,10 +54,21 @@ export function* getByIdMix(
   urlParams: UrlParams,
 ) {
   try {
-    const mix = yield* call(MixService.getById, urlParams);
+    const mixes = yield* select((state: RootState) => state.mixes.list.data);
 
-    yield put(MixActions.list.append({ mix: mix as Mix }));
-    yield put(MixActions.getById.success());
+    if (!ObjectUtil.hasKey(mixes, urlParams.mixId)) {
+      const mix = (yield* call(MixService.getById, urlParams)) as Mix;
+
+      yield put(MixActions.list.append({
+        mix: {
+          ...mix,
+          sceneId: urlParams.sceneId,
+        },
+      }));
+      yield put(MixActions.getById.success());
+    } else {
+      yield put(MixActions.getById.cancel());
+    }
   } catch (err) {
     yield put(MixActions.getById.failure());
   }
@@ -57,14 +80,11 @@ export function* getByIdMix(
 
 export function* watchListMixes() {
   while (true) {
-    const mixes = yield* select((state: RootState) => state.mixes.list.data);
     const { payload } = yield* take<ListMixRequestAction>(
       MixRequestTypes.LIST_REQUEST,
     );
-    // TODO: essa verificação tem que ser mais precisa, baseada no ID e na URL
-    if (isEmpty(mixes)) {
-      yield fork(listMixes, payload.urlParams);
-    }
+
+    yield fork(listMixes, payload.urlParams);
   }
 }
 
@@ -87,10 +107,7 @@ export function* watchGetByIdMix() {
       MixRequestTypes.GET_BY_ID_REQUEST,
     );
 
-    yield fork(
-      getByIdMix,
-      payload.urlParams,
-    );
+    yield fork(getByIdMix, payload.urlParams);
   }
 }
 

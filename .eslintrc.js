@@ -26,6 +26,10 @@ module.exports = {
     'no-console': 'off',
     'prefer-destructuring': 'off',
     'multiline-ternary': ['error', 'never'],
+    "no-restricted-syntax": [
+      "error",
+      "error", "WithStatement",
+  ],
 
     'react/destructuring-assignment': 'off',
     'react/jsx-filename-extension': ['error',

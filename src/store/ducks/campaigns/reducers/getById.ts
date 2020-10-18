@@ -20,4 +20,8 @@ export const getById = createReducer<GetCampaignState, Action>(INITIAL_STATE)
   .handleAction(CampaignActions.getById.failure, () => ({
     loading: false,
     error: true,
+  }))
+  .handleAction(CampaignActions.getById.cancel, () => ({
+    loading: false,
+    error: false,
   }));

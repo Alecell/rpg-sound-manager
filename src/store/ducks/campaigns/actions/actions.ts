@@ -18,6 +18,7 @@ export class CampaignActions {
       CampaignsRequestTypes.LIST_REQUEST,
       [CampaignsRequestTypes.LIST_SUCCESS, (res: CampaignListSuccessAction) => res],
       CampaignsRequestTypes.LIST_FAILURE,
+      CampaignsRequestTypes.LIST_CANCEL,
     )(),
   } as const;
 
@@ -31,5 +32,6 @@ export class CampaignActions {
     [CampaignsRequestTypes.GET_BY_ID_REQUEST, (res: CampaignGetByIdRequestAction) => res],
     CampaignsRequestTypes.GET_BY_ID_SUCCESS,
     CampaignsRequestTypes.GET_BY_ID_FAILURE,
+    CampaignsRequestTypes.GET_BY_ID_CANCEL,
   )();
 }

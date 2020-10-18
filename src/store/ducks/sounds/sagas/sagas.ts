@@ -1,13 +1,12 @@
 import {
-  call, put, take, fork, select, all, takeLatest,
+  call, put, take, fork, all, takeLatest,
 } from 'typed-redux-saga';
 import { v4 as uuid } from 'uuid';
-import isEmpty from 'lodash.isempty';
 
-import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
 import { SoundService } from 'services/sound';
 import { SoundService as SoundServiceApi } from 'services/api/sound';
+import { ObjectUtil } from 'utils/object/object';
 import { SoundActions } from '../actions';
 import {
   SoundRequestTypes,
@@ -19,14 +18,16 @@ import {
   CreateSoundRequestAction,
   SetConfigSoundRequestAction,
 } from './types';
+import { SoundListSuccessAction } from '../actions/types';
 
 export function* listSounds(urlParams: UrlParams) {
   try {
-    const sounds = yield* call(SoundServiceApi.list, urlParams);
+    const sounds = (yield* call(SoundServiceApi.list, urlParams)) as ListSoundsState['data'];
+    const soundList = ObjectUtil.appendOnEveryChild<
+      SoundListSuccessAction['soundList']
+    >(sounds, { collectionId: urlParams.mixId || urlParams.sceneId });
 
-    yield put(SoundActions.list.success({
-      soundList: sounds as ListSoundsState['data'],
-    }));
+    yield put(SoundActions.list.success({ soundList }));
   } catch (err) {
     yield put(SoundActions.list.failure());
   }
@@ -69,16 +70,11 @@ export function* setConfig({ payload }: SetConfigSoundRequestAction) {
 
 export function* watchListSound() {
   while (true) {
-    const sounds = yield* select((state: RootState) => state.sounds.list.data);
     const { payload } = yield* take<ListSoundRequestAction>(
       SoundRequestTypes.LIST_REQUEST,
     );
-    if (isEmpty(sounds)) {
-      yield fork(
-        listSounds,
-        payload.urlParams,
-      );
-    }
+
+    yield fork(listSounds, payload.urlParams);
   }
 }
 

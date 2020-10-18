@@ -1,12 +1,13 @@
 import {
   call, put, take, fork, select, all,
 } from 'typed-redux-saga';
-import isEmpty from 'lodash.isempty';
 
 import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
 import { SceneService } from 'services/api/scene/scene';
+import { ObjectUtil } from 'utils/object/object';
 import { SceneActions } from '../actions';
+import { SceneListSuccessAction } from '../actions/types';
 import { SceneRequestTypes, Scene, ListScenesState } from '../types';
 import { ListSceneRequestAction, CreateSceneRequestAction, GetByIdSceneRequestAction } from './types';
 
@@ -14,11 +15,18 @@ export function* listScenes(
   urlParams: UrlParams,
 ) {
   try {
-    const scenes = yield* call(SceneService.list, urlParams);
+    const scenesState = yield* select((state: RootState) => state.scenes.list.data);
 
-    yield put(SceneActions.list.success({
-      sceneList: scenes as ListScenesState['data'],
-    }));
+    if (Object.keys(scenesState).length < 2) {
+      const scenes = (yield* call(SceneService.list, urlParams)) as ListScenesState['data'];
+      const sceneList = ObjectUtil.appendOnEveryChild<
+        SceneListSuccessAction['sceneList']
+      >(scenes, { sessionId: urlParams.sessionId });
+
+      yield put(SceneActions.list.success({ sceneList }));
+    } else {
+      yield put(SceneActions.list.cancel());
+    }
   } catch (err) {
     yield put(SceneActions.list.failure());
   }
@@ -42,10 +50,21 @@ export function* getByIdScene(
   urlParams: UrlParams,
 ) {
   try {
-    const scene = yield* call(SceneService.getById, urlParams);
+    const scenes = yield* select((state: RootState) => state.scenes.list.data);
 
-    yield put(SceneActions.list.append({ scene: scene as Scene }));
-    yield put(SceneActions.getById.success());
+    if (!ObjectUtil.hasKey(scenes, urlParams.sceneId)) {
+      const scene = (yield* call(SceneService.getById, urlParams)) as Scene;
+
+      yield put(SceneActions.list.append({
+        scene: {
+          ...scene,
+          sessionId: urlParams.sessionId,
+        },
+      }));
+      yield put(SceneActions.getById.success());
+    } else {
+      yield put(SceneActions.getById.cancel());
+    }
   } catch (err) {
     yield put(SceneActions.getById.failure());
   }
@@ -57,13 +76,11 @@ export function* getByIdScene(
 
 export function* watchListScenes() {
   while (true) {
-    const scenes = yield* select((state: RootState) => state.scenes.list.data);
     const { payload } = yield* take<ListSceneRequestAction>(
       SceneRequestTypes.LIST_REQUEST,
     );
-    if (isEmpty(scenes)) {
-      yield fork(listScenes, payload.urlParams);
-    }
+
+    yield fork(listScenes, payload.urlParams);
   }
 }
 

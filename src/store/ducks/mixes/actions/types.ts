@@ -1,5 +1,5 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Mix, ListMixesState } from '../types';
+import { Mix, ListMixesState, MixCollection } from '../types';
 
 export type MixListRequestAction = UrlParamsAsObj;
 export type MixGetByIdRequestAction = UrlParamsAsObj;
@@ -9,7 +9,7 @@ export interface MixListSuccessAction {
 }
 
 export interface MixListAppendAction {
-  mix: Mix;
+  mix: Mix & MixCollection;
 }
 
 export interface MixCreateRequestAction extends UrlParamsAsObj {

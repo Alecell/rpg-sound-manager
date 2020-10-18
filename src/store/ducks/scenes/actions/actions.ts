@@ -16,6 +16,7 @@ export class SceneActions {
       [SceneRequestTypes.LIST_REQUEST, (res: SceneListRequestAction) => res],
       [SceneRequestTypes.LIST_SUCCESS, (res: SceneListSuccessAction) => res],
       SceneRequestTypes.LIST_FAILURE,
+      SceneRequestTypes.LIST_CANCEL,
     )(),
   } as const;
 
@@ -29,5 +30,6 @@ export class SceneActions {
     [SceneRequestTypes.GET_BY_ID_REQUEST, (res: SceneGetByIdRequestAction) => res],
     SceneRequestTypes.GET_BY_ID_SUCCESS,
     SceneRequestTypes.GET_BY_ID_FAILURE,
+    SceneRequestTypes.GET_BY_ID_CANCEL,
   )();
 }

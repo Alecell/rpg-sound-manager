@@ -10,13 +10,9 @@ export function addRawTrack(ref: React.RefObject<HTMLSpanElement>) {
 
   rawTrack.appendChild(progress);
 
-  if (el) {
-    const track = el.querySelector('.MuiSlider-track');
+  const track = el!.querySelector('.MuiSlider-track');
 
-    if (track) {
-      track.appendChild(rawTrack);
-    }
-  }
+  track!.appendChild(rawTrack);
 }
 
 export function updateRawTrack(
@@ -31,7 +27,5 @@ export function updateRawTrack(
   const baseCurrentTime = currentProgress - initialTime;
   const progress = (baseCurrentTime * 100) / baseEndTime;
 
-  if (progressEl) {
-    progressEl.style.width = `${progress}%`;
-  }
+  progressEl!.style.width = `${progress}%`;
 }

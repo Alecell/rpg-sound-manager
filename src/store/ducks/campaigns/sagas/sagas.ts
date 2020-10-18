@@ -6,11 +6,12 @@ import {
   take,
   all,
 } from 'typed-redux-saga';
-import isEmpty from 'lodash.isempty';
 
 import { UrlParams } from 'interfaces/urlParams';
 import { RootState } from 'interfaces/rootState';
 import { CampaignService } from 'services/api/campaign';
+import { UserService } from 'services/user';
+import { ObjectUtil } from 'utils/object/object';
 import { CampaignActions } from '../actions';
 import { CampaignsRequestTypes, Campaign, ListCampaignsState } from '../types';
 import {
@@ -18,14 +19,22 @@ import {
   CreateCampaignRequestAction,
   ListCampaignRequestAction,
 } from './types';
+import { CampaignListSuccessAction } from '../actions/types';
 
 export function* listCampaigns() {
   try {
-    const campaigns = yield* call(CampaignService.list);
+    const campaignsState = yield* select((state: RootState) => state.campaigns.list.data);
 
-    yield put(CampaignActions.list.success({
-      campaignList: campaigns as ListCampaignsState['data'],
-    }));
+    if (Object.keys(campaignsState).length < 2) {
+      const campaigns = (yield* call(CampaignService.list)) as ListCampaignsState['data'];
+      const campaignList = ObjectUtil.appendOnEveryChild<
+        CampaignListSuccessAction['campaignList']
+      >(campaigns, { userId: UserService.getToken() });
+
+      yield put(CampaignActions.list.success({ campaignList }));
+    } else {
+      yield* put(CampaignActions.list.cancel());
+    }
   } catch (err) {
     yield put(CampaignActions.list.failure());
   }
@@ -44,12 +53,23 @@ export function* createCampaign(campaignName: Campaign['name']) {
 
 export function* getByIdCampaign(urlParams: UrlParams) {
   try {
-    const campaign = yield* call(CampaignService.getById, urlParams);
+    const campaigns = yield* select((state: RootState) => state.campaigns.list.data);
 
-    yield put(CampaignActions.list.append({ campaign: campaign as Campaign }));
-    yield put(CampaignActions.getById.success());
+    if (!ObjectUtil.hasKey(campaigns, urlParams.campaignId)) {
+      const campaign = (yield* call(CampaignService.getById, urlParams)) as Campaign;
+
+      yield put(CampaignActions.list.append({
+        campaign: {
+          ...campaign,
+          userId: UserService.getToken(),
+        },
+      }));
+      yield put(CampaignActions.getById.success());
+    } else {
+      yield put(CampaignActions.getById.cancel());
+    }
   } catch (err) {
-    yield put(CampaignActions.getById.failure());
+    yield* put(CampaignActions.getById.failure());
   }
 }
 
@@ -59,11 +79,8 @@ export function* getByIdCampaign(urlParams: UrlParams) {
 
 export function* watchListCampaigns() {
   while (true) {
-    const campaigns = yield* select((state: RootState) => state.campaigns.list.data);
     yield* take<ListCampaignRequestAction>(CampaignsRequestTypes.LIST_REQUEST);
-    if (isEmpty(campaigns)) {
-      yield fork(listCampaigns);
-    }
+    yield fork(listCampaigns);
   }
 }
 

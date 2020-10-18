@@ -16,6 +16,7 @@ export class SessionActions {
       [SessionsRequestTypes.LIST_REQUEST, (res: SessionListRequestAction) => res],
       [SessionsRequestTypes.LIST_SUCCESS, (res: SessionListSuccessAction) => res],
       SessionsRequestTypes.LIST_FAILURE,
+      SessionsRequestTypes.LIST_CANCEL,
     )(),
   } as const;
 
@@ -29,5 +30,6 @@ export class SessionActions {
     [SessionsRequestTypes.GET_BY_ID_REQUEST, (res: SessionGetByIdRequestAction) => res],
     SessionsRequestTypes.GET_BY_ID_SUCCESS,
     SessionsRequestTypes.GET_BY_ID_FAILURE,
+    SessionsRequestTypes.GET_BY_ID_CANCEL,
   )();
 }

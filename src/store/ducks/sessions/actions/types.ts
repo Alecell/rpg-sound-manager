@@ -1,5 +1,5 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Session, ListSessionsState } from '../types';
+import { Session, ListSessionsState, SessionCollection } from '../types';
 
 export type SessionListRequestAction = UrlParamsAsObj;
 export type SessionGetByIdRequestAction = UrlParamsAsObj;
@@ -9,7 +9,7 @@ export interface SessionListSuccessAction {
 }
 
 export interface SessionListAppendAction {
-  session: Session;
+  session: Session & SessionCollection;
 }
 
 export interface SessionCreateRequestAction extends UrlParamsAsObj {
