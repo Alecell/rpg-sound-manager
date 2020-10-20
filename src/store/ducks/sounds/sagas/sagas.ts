@@ -1,5 +1,5 @@
 import {
-  call, put, take, fork, all, takeLatest,
+  call, put, take, fork, all, takeLatest, select,
 } from 'typed-redux-saga';
 import { v4 as uuid } from 'uuid';
 
@@ -7,6 +7,7 @@ import { UrlParams } from 'interfaces/urlParams';
 import { SoundService } from 'services/sound';
 import { SoundService as SoundServiceApi } from 'services/api/sound';
 import { ObjectUtil } from 'utils/object/object';
+import { RootState } from 'interfaces/rootState';
 import { SoundActions } from '../actions';
 import {
   SoundRequestTypes,
@@ -17,6 +18,7 @@ import {
   ListSoundRequestAction,
   CreateSoundRequestAction,
   SetConfigSoundRequestAction,
+  DeleteSoundRequestAction,
 } from './types';
 import { SoundListSuccessAction } from '../actions/types';
 
@@ -51,6 +53,25 @@ export function* createSound(
     yield put(SoundActions.create.success());
   } catch (err) {
     yield put(SoundActions.create.failure());
+  }
+}
+
+export function* deleteSound(
+  urlParams: UrlParams,
+  soundId: Sound['id'],
+  soundUrl: Sound['url'],
+) {
+  try {
+    const sounds = yield* select((state: RootState) => state.sounds.list.data);
+    yield* call(SoundServiceApi.delete, urlParams, soundId);
+    yield* call(SoundServiceApi.deleteFromBucket, soundUrl);
+
+    delete sounds[soundId];
+
+    yield put(SoundActions.list.replace({ soundList: sounds }));
+    yield put(SoundActions.delete.success());
+  } catch (err) {
+    yield put(SoundActions.delete.failure());
   }
 }
 
@@ -92,6 +113,21 @@ export function* watchCreateSound() {
   }
 }
 
+export function* watchDelete() {
+  while (true) {
+    const { payload } = yield* take<DeleteSoundRequestAction>(
+      SoundRequestTypes.DELETE_REQUEST,
+    );
+
+    yield fork(
+      deleteSound,
+      payload.urlParams,
+      payload.soundId,
+      payload.soundUrl,
+    );
+  }
+}
+
 export function* watchSetConfig() {
   while (true) {
     yield takeLatest(SoundActions.setConfig.request, setConfig);
@@ -102,6 +138,7 @@ export function* soundWatcher() {
   return yield all([
     fork(watchListSound),
     fork(watchCreateSound),
+    fork(watchDelete),
     fork(watchSetConfig),
   ]);
 }

@@ -6,6 +6,12 @@ import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
 import { sceneRequest, mixRequest } from '../defaultQueries';
 
+const getSoundPath = (soundUrl: Sound['url']) => {
+  const regex = /(\/)(\w*)(%2F|\/)([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})(\.mp3|ogg|wav)/;
+  const matched = soundUrl.match(regex);
+  return `${matched![2]}/${matched![4]}${matched![5]}`;
+};
+
 export class SoundService {
   static upload(hash: string, file: File): Promise<URL | void> {
     const userId = UserService.getToken();
@@ -20,6 +26,17 @@ export class SoundService {
       })
       .catch((res) => {
         console.log(res);
+      });
+  }
+
+  static deleteFromBucket(soundUrl: Sound['url']): void {
+    storage
+      .ref(getSoundPath(soundUrl)).delete()
+      .then((res) => {
+        console.log('Deletado com sucesso');
+      })
+      .catch((res) => {
+        console.log('Falha ao deletar', res);
       });
   }
 
@@ -69,6 +86,23 @@ export class SoundService {
         mute: config.mute,
         loop: config.loop,
       }, { merge: true });
+  };
+
+  static delete = (
+    urlParams: UrlParams,
+    soundId: Sound['id'],
+  ): void => {
+    let request = sceneRequest;
+
+    if (urlParams.mixId) request = mixRequest;
+
+    request(urlParams)
+      .collection(EFirestoreCollections.SOUNDS)
+      .doc(soundId)
+      .delete()
+      .catch((err) => {
+        console.log('Error deleting document');
+      });
   };
 
   static list(urlParams: UrlParams): Promise<ListScenesState['data'] | void> {

@@ -10,6 +10,7 @@ import { SoundActions } from 'store/ducks/sounds/actions';
 import Loop from './components/Loop';
 import Play from './components/Play';
 import Track from './components/Track';
+import Delete from './components/Delete';
 import Volume from './components/Volume';
 
 import { IPlayerProps } from './types';
@@ -35,6 +36,14 @@ function Player(props: IPlayerProps) {
         mute: sound.muted,
         volume: sound.volume,
       },
+    }));
+  };
+
+  const deleteSound = () => {
+    dispatch(SoundActions.delete.request({
+      soundId: props.id,
+      soundUrl: props.url,
+      urlParams,
     }));
   };
 
@@ -88,6 +97,9 @@ function Player(props: IPlayerProps) {
       <Volume
         volume={sound.volume}
         onChange={updateVolume}
+      />
+      <Delete
+        onDelete={deleteSound}
       />
       <Track
         playing={playing}

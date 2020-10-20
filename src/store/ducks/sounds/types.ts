@@ -29,8 +29,18 @@ export enum SoundRequestTypes {
   SET_CONFIG_REQUEST = '@sound/SET_CONFIG_REQUEST',
   SET_CONFIG_SUCCESS = '@sound/SET_CONFIG_SUCCESS',
   SET_CONFIG_FAILURE = '@sound/SET_CONFIG_FAILURE',
+
+  DELETE_REQUEST = '@sound/DELETE_REQUEST',
+  DELETE_SUCCESS = '@sound/DELETE_SUCCESS',
+  DELETE_FAILURE = '@sound/DELETE_FAILURE',
 }
 
+export enum SoundTypes {
+  REPLACE = '@sound/REPLACE',
+}
+
+//  TODO: Ajustar, esse collectionId tem que estar na action
 export type ListSoundsState = RequestState<Sound & { collectionId?: Mix['id'] | Scene['id']; }>;
+export type DeleteSoundState = RequestState;
 export type CreateSoundState = RequestState;
 export type SetConfigSoundState = RequestState;
