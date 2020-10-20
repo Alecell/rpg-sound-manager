@@ -27,4 +27,9 @@ export const list = createReducer<ListSoundsState, Action>(INITIAL_STATE)
     ...store,
     loading: false,
     error: true,
+  }))
+  .handleAction(SoundActions.list.replace, (store, action) => ({
+    data: action.payload.soundList,
+    loading: false,
+    error: false,
   }));
