@@ -12,6 +12,7 @@ import { MixActions } from 'store/ducks/mixes/actions/actions';
 import { CampaignActions } from 'store/ducks/campaigns/actions';
 
 import Player from 'components/Player';
+import MixPlayer from 'components/MixPlayer/MixPlayer';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
@@ -94,13 +95,15 @@ const ScenePage = () => {
           const id = store.mixes.list.data[key].id;
 
           return (
-            <button
-              key={id}
-              type="button"
-              onClick={goToMixPage(id)}
-            >
-              { store.mixes.list.data[key].name }
-            </button>
+            <div key={id}>
+              <button
+                type="button"
+                onClick={goToMixPage(id)}
+              >
+                { store.mixes.list.data[key].name }
+              </button>
+              <MixPlayer mixId={id} />
+            </div>
           );
         })}
     </div>
