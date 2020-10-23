@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { routes } from 'constants/routes';
 import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
 import { SceneActions } from 'store/ducks/scenes/actions';
@@ -11,6 +10,7 @@ import { SessionActions } from 'store/ducks/sessions/actions';
 import { MixActions } from 'store/ducks/mixes/actions/actions';
 import { CampaignActions } from 'store/ducks/campaigns/actions';
 
+import Player from 'components/Player';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
 const useRootStore = () => useSelector(
@@ -22,7 +22,6 @@ const useRootStore = () => useSelector(
 
 const MixPage = () => {
   const store = useRootStore();
-  const history = useHistory();
   const dispatch = useDispatch();
   const urlParams = useParams<UrlParams>();
 
@@ -30,15 +29,6 @@ const MixPage = () => {
 
   const toggleCreateDialog = (status: boolean) => () => {
     setShowCreateDialog(status);
-  };
-
-  const goToMixPage = (sceneId: UrlParams['sceneId']) => () => {
-    history.push(
-      routes.campaign(urlParams.campaignId)
-        .session(urlParams.sessionId)
-        .scene(sceneId)
-        .path,
-    );
   };
 
   const createSound = (name: string, file: File | undefined) => {
@@ -54,16 +44,21 @@ const MixPage = () => {
       {Object
         .keys(store.sounds.list.data)
         .map((key) => {
-          const id = store.sounds.list.data[key].id;
+          const {
+            id,
+            url,
+            name,
+            config,
+          } = store.sounds.list.data[key];
 
           return (
-            <button
+            <Player
               key={id}
-              type="button"
-              onClick={goToMixPage(id)}
-            >
-              { store.sounds.list.data[key].name }
-            </button>
+              id={id}
+              url={url}
+              name={name}
+              config={config}
+            />
           );
         })}
     </div>

@@ -1,6 +1,7 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
 import { Mix, ListMixesState, MixCollection } from '../types';
 
+export type MixPlayAction = UrlParamsAsObj;
 export type MixListRequestAction = UrlParamsAsObj;
 export type MixGetByIdRequestAction = UrlParamsAsObj;
 

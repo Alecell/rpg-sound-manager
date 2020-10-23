@@ -8,7 +8,9 @@ import { MixService } from 'services/api/mix';
 import { ObjectUtil } from 'utils/object/object';
 import { MixActions } from '../actions';
 import { MixListSuccessAction } from '../actions/types';
-import { MixRequestTypes, Mix, ListMixesState } from '../types';
+import {
+  MixRequestTypes, Mix, ListMixesState,
+} from '../types';
 import {
   ListMixRequestAction,
   CreateMixRequestAction,

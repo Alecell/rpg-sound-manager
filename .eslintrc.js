@@ -25,6 +25,7 @@ module.exports = {
     semi: 'off',
     'no-console': 'off',
     'prefer-destructuring': 'off',
+    'no-useless-constructor': 'off',
     'multiline-ternary': ['error', 'never'],
     "no-restricted-syntax": [
       "error",
