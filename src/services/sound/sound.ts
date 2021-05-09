@@ -16,13 +16,13 @@ export class SoundService extends Audio {
     super(soundUrl);
 
     this.config = { ...config };
+    this.volume = config.volume;
+    this.loop = config.loop;
 
     this.addEventListener('timeupdate', this.handleAudioEnd);
     this.addEventListener('ended', this.handleAudioEnd);
     this.addEventListener('loadeddata', () => {
       this.setTimeToStart();
-      this.volume = config.volume;
-      this.loop = config.loop;
     });
   }
 
