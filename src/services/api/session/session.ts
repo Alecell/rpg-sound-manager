@@ -1,6 +1,7 @@
 import { ListSessionsState, Session } from 'store/ducks/sessions/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
+import { TEmptyObject } from 'types/emptyObject';
 import { campaignRequest, sessionRequest } from '../defaultQueries';
 
 export class SessionService {
@@ -20,9 +21,9 @@ export class SessionService {
   }
 
   static list(
-    urlParams: UrlParams,
-  ): Promise<ListSessionsState['data'] | void> {
-    return campaignRequest(urlParams)
+    params: UrlParams,
+  ) {
+    return campaignRequest(params)
       .collection(EFirestoreCollections.SESSIONS)
       .get()
       .then((res) => res.docs.reduce((session, obj) => {
@@ -37,12 +38,11 @@ export class SessionService {
       }, {} as ListSessionsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as ListSessionsState['data'];
       });
   }
 
-  static getById(
-    urlParams: UrlParams,
-  ): Promise<Session | void> {
+  static getById(urlParams: UrlParams) {
     return sessionRequest(urlParams)
       .get()
       .then((res) => {
@@ -51,10 +51,11 @@ export class SessionService {
         return {
           id: urlParams.sessionId,
           name: data.name,
-        };
+        } as Session;
       })
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as TEmptyObject;
       });
   }
 }

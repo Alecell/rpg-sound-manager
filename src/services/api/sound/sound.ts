@@ -1,6 +1,6 @@
 import { storage } from 'config/firebase';
-import { UserService } from 'services/user';
-import { ListScenesState, Scene } from 'store/ducks/scenes/types';
+import { UserService } from 'services/user/user';
+import { Scene } from 'store/ducks/scenes/types';
 import { ListSoundsState, Sound, SoundConfig } from 'store/ducks/sounds/types';
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
@@ -58,7 +58,7 @@ export class SoundService {
         url: fileUrl,
         start: 0,
         end: duration,
-        volume: 1,
+        volume: 100,
         mute: false,
         loop: false,
       })
@@ -105,7 +105,7 @@ export class SoundService {
       });
   };
 
-  static list(urlParams: UrlParams): Promise<ListScenesState['data'] | void> {
+  static async list(urlParams: UrlParams) {
     let request = sceneRequest;
 
     if (urlParams.mixId) request = mixRequest;
@@ -136,6 +136,7 @@ export class SoundService {
       }, {} as ListSoundsState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as ListSoundsState['data'];
       });
   }
 

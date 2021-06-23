@@ -1,4 +1,4 @@
-import { UserService } from 'services/user';
+import { UserService } from 'services/user/user';
 import { UrlParams } from 'interfaces/urlParams';
 import { firestore } from 'config/firebase';
 import { EFirestoreCollections } from 'enums/firestoreCollections';

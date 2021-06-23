@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { routes } from 'constants/routes';
-import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
-import { SceneActions } from 'store/ducks/scenes/actions';
-import { SessionActions } from 'store/ducks/sessions/actions';
-import { CampaignActions } from 'store/ducks/campaigns/actions';
-
+import { SceneActions } from 'store/ducks/scenes/actions/actions';
+import { useSessionGetById } from 'hooks/queries/session/useSessionGetById';
+import { useSceneList } from 'hooks/queries/scenes/useSceneList';
 import DialogCreate from '../../components/dialogs/Create';
 
-const useRootStore = () => useSelector(
-  (state: RootState) => ({
-    sessions: state.sessions.list.data,
-    scenes: state.scenes,
-  }), shallowEqual,
-);
-
 const SessionPage = () => {
-  const store = useRootStore();
   const history = useHistory();
   const dispatch = useDispatch();
   const urlParams = useParams<UrlParams>();
+  const sceneList = useSceneList(urlParams);
+  const currentSession = useSessionGetById(urlParams);
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -49,9 +41,9 @@ const SessionPage = () => {
   const renderButtons = () => (
     <div>
       {Object
-        .keys(store.scenes.list.data)
+        .keys(sceneList.data)
         .map((key) => {
-          const id = store.scenes.list.data[key].id;
+          const id = sceneList.data[key].id;
 
           return (
             <button
@@ -59,25 +51,19 @@ const SessionPage = () => {
               type="button"
               onClick={goToScenePage(id)}
             >
-              { store.scenes.list.data[key].name }
+              { sceneList.data[key].name }
             </button>
           );
         })}
     </div>
   );
 
-  useEffect(() => {
-    dispatch(SceneActions.list.request({ urlParams }));
-    dispatch(SessionActions.getById.request({ urlParams }));
-    dispatch(CampaignActions.getById.request({ urlParams }));
-  }, [dispatch, urlParams, urlParams.campaignId, urlParams.sessionId]);
-
   return (
     <>
       <h1>
         Sessão
         {' '}
-        {store.sessions[urlParams.sessionId]?.name}
+        {currentSession.data.name}
       </h1>
       <button
         type="button"

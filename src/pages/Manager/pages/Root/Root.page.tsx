@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
 import { Campaign } from 'store/ducks/campaigns/types';
-import { CampaignActions } from 'store/ducks/campaigns/actions';
+import { CampaignActions } from 'store/ducks/campaigns/actions/actions';
 import { routes } from 'constants/routes';
 
-import { UserService } from 'services/user/user';
+import { useCampaignList } from 'hooks/queries/campaign/useCampaignList';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
-const useRootStore = () => useSelector(
-  (state: RootState) => ({
-    campaigns: state.campaigns.list.data,
-  }), shallowEqual,
-);
-
 const RootPage = () => {
-  const store = useRootStore();
   const history = useHistory();
   const dispatch = useDispatch();
+  const campaignList = useCampaignList();
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -40,10 +33,9 @@ const RootPage = () => {
     <div>
       {
         Object
-          .keys(store.campaigns)
-          .filter((key: string) => store.campaigns[key].userId === UserService.getToken())
+          .keys(campaignList.data)
           .map((key) => {
-            const id = store.campaigns[key].id;
+            const id = campaignList.data[key].id;
 
             return (
               <button
@@ -51,17 +43,13 @@ const RootPage = () => {
                 type="button"
                 onClick={goToCampaignPage(id)}
               >
-                { store.campaigns[key].name }
+                { campaignList.data[key].name }
               </button>
             );
           })
       }
     </div>
   );
-
-  useEffect(() => {
-    dispatch(CampaignActions.list.request());
-  }, [dispatch]);
 
   return (
     <>

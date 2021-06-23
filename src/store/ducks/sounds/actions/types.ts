@@ -1,15 +1,5 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Sound, ListSoundsState, SoundConfig } from '../types';
-
-export type SoundListRequestAction = UrlParamsAsObj;
-
-export interface SoundListSuccessAction {
-  soundList: ListSoundsState['data'];
-}
-
-export interface SoundListDeleteAction {
-  soundList: ListSoundsState['data'];
-}
+import { Sound, SoundConfig } from '../types';
 
 export interface SoundCreateRequestAction extends UrlParamsAsObj {
   soundName: Sound['name'];

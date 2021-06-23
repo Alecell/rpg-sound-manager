@@ -1,4 +1,4 @@
-import { SoundService } from 'services/sound';
+import { SoundService } from 'services/sound/sound';
 import { ListSoundsState } from 'store/ducks/sounds/types';
 
 export class Sounds {

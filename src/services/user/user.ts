@@ -1,4 +1,4 @@
-import { CookieService } from '../cookie';
+import { CookieService } from '../cookie/cookie';
 
 export class UserService {
   static getToken(): string {

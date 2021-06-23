@@ -2,6 +2,7 @@ import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { Mix } from 'store/ducks/mixes/types';
 import { ListScenesState } from 'store/ducks/scenes/types';
 import { UrlParams } from 'interfaces/urlParams';
+import { ListSoundsState } from 'store/ducks/sounds/types';
 import { mixRequest, sceneRequest } from '../defaultQueries';
 
 export class MixService {
@@ -20,9 +21,7 @@ export class MixService {
       });
   }
 
-  static list(
-    urlParams: UrlParams,
-  ): Promise<ListScenesState['data'] | void> {
+  static list(urlParams: UrlParams) {
     return sceneRequest(urlParams)
       .collection(EFirestoreCollections.MIXES)
       .get()
@@ -38,12 +37,11 @@ export class MixService {
       }, {} as ListScenesState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as ListSoundsState['data'];
       });
   }
 
-  static getById(
-    urlParams: UrlParams,
-  ): Promise<Mix | void> {
+  static getById(urlParams: UrlParams) {
     return mixRequest(urlParams)
       .get()
       .then((res) => {
@@ -52,10 +50,11 @@ export class MixService {
         return {
           id: urlParams.mixId,
           name: data.name,
-        };
+        } as Mix;
       })
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as Mix;
       });
   }
 }

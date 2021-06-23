@@ -1,5 +1,3 @@
-import { Mix } from '../mixes/types';
-import { Scene } from '../scenes/types';
 import { RequestState } from '../types';
 
 export interface SoundConfig {
@@ -18,10 +16,6 @@ export interface Sound {
 }
 
 export enum SoundRequestTypes {
-  LIST_REQUEST = '@sound/LIST_REQUEST',
-  LIST_SUCCESS = '@sound/LIST_SUCCESS',
-  LIST_FAILURE = '@sound/LIST_FAILURE',
-
   CREATE_REQUEST = '@sound/CREATE_REQUEST',
   CREATE_SUCCESS = '@sound/CREATE_SUCCESS',
   CREATE_FAILURE = '@sound/CREATE_FAILURE',
@@ -35,12 +29,7 @@ export enum SoundRequestTypes {
   DELETE_FAILURE = '@sound/DELETE_FAILURE',
 }
 
-export enum SoundTypes {
-  REPLACE = '@sound/REPLACE',
-}
-
-//  TODO: Ajustar, esse collectionId tem que estar na action
-export type ListSoundsState = RequestState<Sound & { collectionId?: Mix['id'] | Scene['id']; }>;
+export type ListSoundsState = RequestState<Sound>;
 export type DeleteSoundState = RequestState;
 export type CreateSoundState = RequestState;
 export type SetConfigSoundState = RequestState;

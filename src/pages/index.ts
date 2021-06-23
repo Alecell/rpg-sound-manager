@@ -1,4 +1,4 @@
-import ManagerSwitcher from './Manager';
+import ManagerSwitcher from './Manager/Manager';
 
 export {
   ManagerSwitcher,
