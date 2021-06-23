@@ -1,6 +1,6 @@
 import { Action, createReducer } from 'typesafe-actions';
 
-import { SessionActions } from '../actions';
+import { SessionActions } from '../actions/actions';
 import { CreateSessionState } from '../types';
 
 export const INITIAL_STATE: CreateSessionState = {

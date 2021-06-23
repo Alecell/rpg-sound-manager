@@ -1,6 +1,6 @@
 import { Action, createReducer } from 'typesafe-actions';
 
-import { CampaignActions } from '../actions';
+import { CampaignActions } from '../actions/actions';
 import { CreateCampaignState } from '../types';
 
 export const INITIAL_STATE: CreateCampaignState = {

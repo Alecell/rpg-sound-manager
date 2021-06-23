@@ -1,6 +1,7 @@
 import { EFirestoreCollections } from 'enums/firestoreCollections';
 import { UrlParams } from 'interfaces/urlParams';
 import { ListScenesState, Scene } from 'store/ducks/scenes/types';
+import { TEmptyObject } from 'types/emptyObject';
 import { sceneRequest, sessionRequest } from '../defaultQueries';
 
 export class SceneService {
@@ -19,9 +20,7 @@ export class SceneService {
       });
   }
 
-  static list(
-    urlParams: UrlParams,
-  ): Promise<ListScenesState['data'] | void> {
+  static list(urlParams: UrlParams) {
     return sessionRequest(urlParams)
       .collection(EFirestoreCollections.SCENES)
       .get()
@@ -37,12 +36,11 @@ export class SceneService {
       }, {} as ListScenesState['data']))
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as TEmptyObject;
       });
   }
 
-  static getById(
-    urlParams: UrlParams,
-  ): Promise<Scene | void> {
+  static getById(urlParams: UrlParams) {
     return sceneRequest(urlParams)
       .get()
       .then((res) => {
@@ -51,10 +49,11 @@ export class SceneService {
         return {
           id: urlParams.sceneId,
           name: data.name,
-        };
+        } as Scene;
       })
       .catch((error) => {
         console.error('Error writing document: ', error);
+        return {} as TEmptyObject;
       });
   }
 }

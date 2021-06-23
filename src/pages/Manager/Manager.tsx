@@ -4,11 +4,11 @@ import { Switch, Route } from 'react-router-dom';
 import { routes } from 'constants/routes';
 
 import Header from 'components/Header';
-import RootPage from './pages/Root';
-import ScenePage from './pages/Scene';
-import SessionPage from './pages/Session';
-import CampaignPage from './pages/Campaign';
-import MixPage from './pages/Mix';
+import RootPage from './pages/Root/Root.page';
+import ScenePage from './pages/Scene/Scene.page';
+import SessionPage from './pages/Session/Session.page';
+import CampaignPage from './pages/Campaign/Campaign.page';
+import MixPage from './pages/Mix/Mix.page';
 
 import scss from './Manager.module.scss';
 

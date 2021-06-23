@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { UrlParams } from 'interfaces/urlParams';
-import { SoundService } from 'services/sound';
 import { TEmptyObject } from 'types/emptyObject';
-import { SoundActions } from 'store/ducks/sounds/actions';
+import { SoundService } from 'services/sound/sound';
+import { SoundActions } from 'store/ducks/sounds/actions/actions';
 
 import Loop from './components/Loop';
 import Play from './components/Play';

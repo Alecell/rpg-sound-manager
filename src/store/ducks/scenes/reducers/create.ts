@@ -1,6 +1,6 @@
 import { Action, createReducer } from 'typesafe-actions';
 
-import { SceneActions } from '../actions';
+import { SceneActions } from '../actions/actions';
 import { CreateSceneState } from '../types';
 
 export const INITIAL_STATE: CreateSceneState = {

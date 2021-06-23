@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 
 //  Needed to prevent undefined errors when re-export firebase.firestore() and firebase.storage()
 /* eslint-disable import/no-duplicates */
+import 'firebase/auth';
 import 'firebase/storage';
 import 'firebase/firestore';
 import 'firebase/analytics';
@@ -22,5 +23,6 @@ firebase.analytics();
 
 const firestore = firebase.firestore();
 const storage = firebase.storage();
+const auth = firebase.auth();
 
-export { firestore, storage };
+export { firestore, storage, auth };

@@ -1,25 +1,13 @@
-import { createAction, createAsyncAction } from 'typesafe-actions';
+import { createAsyncAction } from 'typesafe-actions';
 
-import { SoundRequestTypes, SoundTypes } from '../types';
+import { SoundRequestTypes } from '../types';
 import {
-  SoundListRequestAction,
-  SoundListSuccessAction,
   SoundCreateRequestAction,
   SoundDeleteRequestAction,
   SoundSetConfigRequestAction,
-  SoundListDeleteAction,
 } from './types';
 
 export class SoundActions {
-  static readonly list = {
-    replace: createAction(SoundTypes.REPLACE)<SoundListDeleteAction>(),
-    ...createAsyncAction(
-      [SoundRequestTypes.LIST_REQUEST, (res: SoundListRequestAction) => res],
-      [SoundRequestTypes.LIST_SUCCESS, (res: SoundListSuccessAction) => res],
-      SoundRequestTypes.LIST_FAILURE,
-    )(),
-  };
-
   static readonly create = createAsyncAction(
     [SoundRequestTypes.CREATE_REQUEST, (res: SoundCreateRequestAction) => res],
     SoundRequestTypes.CREATE_SUCCESS,

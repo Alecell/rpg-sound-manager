@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { routes } from 'constants/routes';
-import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
-import { SessionActions } from 'store/ducks/sessions/actions';
-import { CampaignActions } from 'store/ducks/campaigns/actions';
+import { SessionActions } from 'store/ducks/sessions/actions/actions';
 
+import { useSessionList } from 'hooks/queries/session/useSessionList';
+import { useCampaignGetById } from 'hooks/queries/campaign/useCampaignGetById';
 import DialogCreate from '../../components/dialogs/Create';
 
-const useRootStore = () => useSelector(
-  (state: RootState) => ({
-    campaigns: state.campaigns.list.data,
-    sessions: state.sessions.list.data,
-  }), shallowEqual,
-);
-
 const CampaignPage = () => {
-  const store = useRootStore();
   const history = useHistory();
   const dispatch = useDispatch();
   const urlParams = useParams<UrlParams>();
+  const sessionList = useSessionList(urlParams);
+  const currentCampaign = useCampaignGetById(urlParams);
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -44,10 +38,9 @@ const CampaignPage = () => {
     <div>
       {
         Object
-          .keys(store.sessions)
-          .filter((key: string) => store.sessions[key].campaignId === urlParams.campaignId)
+          .keys(sessionList.data)
           .map((key) => {
-            const id = store.sessions[key].id;
+            const id = sessionList.data[key].id;
 
             return (
               <button
@@ -55,7 +48,7 @@ const CampaignPage = () => {
                 type="button"
                 onClick={goToSessionPage(id)}
               >
-                { store.sessions[key].name }
+                { sessionList.data[key].name }
               </button>
             );
           })
@@ -63,17 +56,12 @@ const CampaignPage = () => {
     </div>
   );
 
-  useEffect(() => {
-    dispatch(SessionActions.list.request({ urlParams }));
-    dispatch(CampaignActions.getById.request({ urlParams }));
-  }, [dispatch, urlParams, urlParams.campaignId]);
-
   return (
     <>
       <h1>
         Campanha
         {' '}
-        {store.campaigns[urlParams.campaignId]?.name}
+        {currentCampaign.data.name}
       </h1>
       <button
         type="button"

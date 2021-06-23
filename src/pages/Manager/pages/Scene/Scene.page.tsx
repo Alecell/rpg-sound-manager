@@ -1,33 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { routes } from 'constants/routes';
-import { RootState } from 'interfaces/rootState';
 import { UrlParams } from 'interfaces/urlParams';
-import { SceneActions } from 'store/ducks/scenes/actions';
-import { SoundActions } from 'store/ducks/sounds/actions';
-import { SessionActions } from 'store/ducks/sessions/actions';
+import { SoundActions } from 'store/ducks/sounds/actions/actions';
 import { MixActions } from 'store/ducks/mixes/actions/actions';
-import { CampaignActions } from 'store/ducks/campaigns/actions';
 
 import Player from 'components/Player';
 import MixPlayer from 'components/MixPlayer/MixPlayer';
+import { useSceneGetById } from 'hooks/queries/scenes/useSceneGetById';
+import { useSoundList } from 'hooks/queries/sound/useSoundList';
+import { useMixList } from 'hooks/queries/mix/useMixList';
 import DialogCreate from '../../components/dialogs/Create/Create';
 
-const useRootStore = () => useSelector(
-  (state: RootState) => ({
-    scenes: state.scenes.list.data,
-    sounds: state.sounds,
-    mixes: state.mixes,
-  }), shallowEqual,
-);
-
 const ScenePage = () => {
-  const store = useRootStore();
   const history = useHistory();
   const dispatch = useDispatch();
   const urlParams = useParams<UrlParams>();
+  const currentScene = useSceneGetById(urlParams);
+  const mixList = useMixList(urlParams);
+  const soundList = useSoundList(urlParams);
 
   const [showCreateMixDialog, setShowCreateMixDialog] = useState(false);
   const [showCreateSoundDialog, setShowCreateSoundDialog] = useState(false);
@@ -65,14 +58,14 @@ const ScenePage = () => {
   const renderButtonsSound = () => (
     <div>
       {Object
-        .keys(store.sounds.list.data)
+        .keys(soundList.data)
         .map((key) => {
           const {
             id,
             url,
             name,
             config,
-          } = store.sounds.list.data[key];
+          } = soundList.data[key];
 
           return (
             <Player
@@ -90,9 +83,9 @@ const ScenePage = () => {
   const renderButtonsMix = () => (
     <div>
       {Object
-        .keys(store.mixes.list.data)
+        .keys(mixList.data)
         .map((key) => {
-          const id = store.mixes.list.data[key].id;
+          const id = mixList.data[key].id;
 
           return (
             <div key={id}>
@@ -100,7 +93,7 @@ const ScenePage = () => {
                 type="button"
                 onClick={goToMixPage(id)}
               >
-                { store.mixes.list.data[key].name }
+                { mixList.data[key].name }
               </button>
               <MixPlayer mixId={id} />
             </div>
@@ -109,20 +102,12 @@ const ScenePage = () => {
     </div>
   );
 
-  useEffect(() => {
-    dispatch(MixActions.list.request({ urlParams }));
-    dispatch(SoundActions.list.request({ urlParams }));
-    dispatch(SceneActions.getById.request({ urlParams }));
-    dispatch(SessionActions.getById.request({ urlParams }));
-    dispatch(CampaignActions.getById.request({ urlParams }));
-  }, [dispatch, urlParams]);
-
   return (
     <>
       <h1>
         Cena
         {' '}
-        {store.scenes[urlParams.sceneId]?.name}
+        {currentScene.data.name}
       </h1>
       <button
         type="button"

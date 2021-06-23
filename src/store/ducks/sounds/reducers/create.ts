@@ -1,6 +1,6 @@
 import { Action, createReducer } from 'typesafe-actions';
 
-import { SoundActions } from '../actions';
+import { SoundActions } from '../actions/actions';
 import { CreateSoundState } from '../types';
 
 export const INITIAL_STATE: CreateSoundState = {

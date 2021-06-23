@@ -1,17 +1,7 @@
 import { UrlParamsAsObj } from 'interfaces/urlParams';
-import { Mix, ListMixesState, MixCollection } from '../types';
+import { Mix } from '../types';
 
 export type MixPlayAction = UrlParamsAsObj;
-export type MixListRequestAction = UrlParamsAsObj;
-export type MixGetByIdRequestAction = UrlParamsAsObj;
-
-export interface MixListSuccessAction {
-  mixList: ListMixesState['data'];
-}
-
-export interface MixListAppendAction {
-  mix: Mix & MixCollection;
-}
 
 export interface MixCreateRequestAction extends UrlParamsAsObj {
   mixName: Mix['name'];

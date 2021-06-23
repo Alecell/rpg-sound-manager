@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { UrlParams } from 'interfaces/urlParams';
-import { RootState } from 'interfaces/rootState';
-import { SoundActions } from 'store/ducks/sounds/actions/actions';
+import { useSoundList } from 'hooks/queries/sound/useSoundList';
+import isEmpty from 'lodash.isempty';
 import { Sounds } from './sounds';
 import { IMixPlayer } from './types';
 
-const useMixPlayerStore = () => useSelector(
-  (state: RootState) => ({
-    sounds: state.sounds.list,
-  }), shallowEqual,
-);
-
 function MixPlayer(props: IMixPlayer) {
-  const store = useMixPlayerStore();
   const urlParams = useParams<UrlParams>();
-  const dispatch = useDispatch();
+  const soundList = useSoundList({
+    ...urlParams,
+    mixId: props.mixId,
+  });
 
   const [sounds, setSounds] = useState<Sounds>();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -25,21 +20,14 @@ function MixPlayer(props: IMixPlayer) {
   const play = () => setIsPlaying(!isPlaying);
 
   useEffect(() => {
-    setSounds(new Sounds(store.sounds.data));
-  }, [store.sounds.data]);
+    if (isEmpty(sounds) && !isEmpty(soundList.data)) {
+      setSounds(new Sounds(soundList.data));
+    }
+  }, [soundList.data, sounds]);
 
   useEffect(() => {
     if (isPlaying) sounds!.play();
   }, [isPlaying, sounds]);
-
-  useEffect(() => {
-    dispatch(SoundActions.list.request({
-      urlParams: {
-        ...urlParams,
-        mixId: props.mixId,
-      },
-    }));
-  }, [dispatch, props.mixId, urlParams]);
 
   return (
     <button

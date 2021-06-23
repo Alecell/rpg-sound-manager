@@ -1,6 +1,6 @@
 import { Action, createReducer } from 'typesafe-actions';
 
-import { MixActions } from '../actions';
+import { MixActions } from '../actions/actions';
 import { CreateMixState } from '../types';
 
 export const INITIAL_STATE: CreateMixState = {
